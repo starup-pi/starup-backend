@@ -1,0 +1,19 @@
+{% extends 'usuarios/base.html' %}
+{% load usuarios_extras %}
+{% block title %}{{ entidade_nome }}{% endblock %}
+{% block content %}
+    <div class="toolbar">
+        <h1>{{ entidade_nome }}</h1>
+        <div class="acoes">
+            <a class="btn btn-secundario" href="{% url url_namespace|add:'-update' object.pk %}">Editar</a>
+            <a class="btn btn-perigo" href="{% url url_namespace|add:'-delete' object.pk %}">Remover</a>
+            <a class="btn btn-secundario" href="{% url url_namespace|add:'-list' %}">Voltar</a>
+        </div>
+    </div>
+    <dl>
+        {% for field_name, label in list_fields %}
+            <dt>{{ label }}</dt>
+            <dd>{{ object|get_attr:field_name|default:'—' }}</dd>
+        {% endfor %}
+    </dl>
+{% endblock %}

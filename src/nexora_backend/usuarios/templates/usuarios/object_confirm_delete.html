@@ -1,0 +1,13 @@
+{% extends 'usuarios/base.html' %}
+{% block title %}Remover {{ entidade_nome }}{% endblock %}
+{% block content %}
+    <h1>Remover {{ entidade_nome }}?</h1>
+    <p>Tem certeza que deseja remover <strong>{{ object }}</strong>? Esta ação não pode ser desfeita.</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="acoes">
+            <button class="btn btn-perigo" type="submit">Sim, remover</button>
+            <a class="btn btn-secundario" href="{% url url_namespace|add:'-list' %}">Cancelar</a>
+        </div>
+    </form>
+{% endblock %}

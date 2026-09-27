@@ -15,8 +15,29 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # Front (CRUD via templates) das entidades base
+    path('', include('nexora_backend.usuarios.urls', namespace='usuarios')),
+    # Back (API REST) das entidades base
+    path('api/v1/', include('nexora_backend.usuarios.api_urls')),
+    # Open API Specification (OAS) e documentação interativa
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path(
+        'api/schema/swagger-ui/',
+        SpectacularSwaggerView.as_view(url_name='schema'),
+        name='swagger-ui',
+    ),
+    path(
+        'api/schema/redoc/',
+        SpectacularRedocView.as_view(url_name='schema'),
+        name='redoc',
+    ),
 ]

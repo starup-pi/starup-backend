@@ -10,10 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Projeto em layout `src/`: garante que `nexora_backend` seja importável.
+sys.path.insert(0, str(BASE_DIR / 'src'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -37,6 +41,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Terceiros
+    'rest_framework',
+    'drf_spectacular',
+    'django_filters',
+    # Apps do projeto
+    'nexora_backend.usuarios.apps.UsuariosConfig',
+]
+
+# Modelo de usuário customizado (entidade USUARIO do ERD, login por e-mail).
+AUTH_USER_MODEL = 'usuarios.Usuario'
+
+# Argon2id como hasher primário (Argon2id ou Bcrypt salt 12, conforme
+# especificado no dicionário de dados da entidade USUARIO).
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
 ]
 
 MIDDLEWARE = [
@@ -102,9 +123,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Recife'
 
 USE_I18N = True
 
@@ -115,6 +136,42 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
+# Django REST Framework
+# https://www.django-rest-framework.org/api-guide/settings/
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+}
+
+# drf-spectacular: geração da Open API Specification (OAS 3) do projeto.
+# Documentação servida em /api/schema/swagger-ui/ e /api/schema/redoc/.
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Nexora API',
+    'DESCRIPTION': (
+        'API REST das entidades base da Nexora: USUARIO e os perfis '
+        'PERFIL_STARTUP, PERFIL_EMPRESA_CLIENTE, PERFIL_INVESTIDOR e '
+        'PERFIL_ENTIDADE_FOMENTO — a fundação de autenticação/identidade '
+        'sobre a qual o restante do domínio (ofertas, execuções de teste, '
+        'editais e eventos) é construído.'
+    ),
+    'VERSION': '0.1.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SCHEMA_PATH_PREFIX': r'/api/v1',
+    'COMPONENT_SPLIT_REQUEST': True,
+}
 
 
 # Email

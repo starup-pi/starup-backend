@@ -1,0 +1,46 @@
+{% extends 'usuarios/base.html' %}
+{% load usuarios_extras %}
+{% block title %}{{ entidade_nome }}s{% endblock %}
+{% block content %}
+    <div class="toolbar">
+        <div>
+            <h1>{{ entidade_nome }}s</h1>
+            <p class="subtitulo">{{ paginator.count|default:object_list|length }} registro(s)</p>
+        </div>
+        <a class="btn" href="{% url url_namespace|add:'-create' %}">+ Novo {{ entidade_nome }}</a>
+    </div>
+
+    {% if object_list %}
+        <table>
+            <thead>
+                <tr>
+                    {% for field_name, label in list_fields %}<th>{{ label }}</th>{% endfor %}
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in object_list %}
+                    <tr>
+                        {% for field_name, label in list_fields %}
+                            <td>{{ object|get_attr:field_name }}</td>
+                        {% endfor %}
+                        <td class="acoes">
+                            <a class="btn btn-secundario" href="{% url url_namespace|add:'-detail' object.pk %}">Ver</a>
+                            <a class="btn btn-secundario" href="{% url url_namespace|add:'-update' object.pk %}">Editar</a>
+                            <a class="btn btn-perigo" href="{% url url_namespace|add:'-delete' object.pk %}">Remover</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if is_paginated %}
+            <div class="paginacao">
+                {% if page_obj.has_previous %}<a class="btn btn-secundario" href="?page={{ page_obj.previous_page_number }}">« Anterior</a>{% endif %}
+                <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}<a class="btn btn-secundario" href="?page={{ page_obj.next_page_number }}">Próxima »</a>{% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <p class="vazio">Nenhum registro cadastrado ainda.</p>
+    {% endif %}
+{% endblock %}
