@@ -5,14 +5,38 @@ description = "Add your description here"
 authors = [
     { name = "JoaoSant7", email = "pedro_romano7@proton.me" }
 ]
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 dependencies = [
-    "django>=6.1.1",
-    "djangorestframework>=3.16.0",
-    "drf-spectacular>=0.28.0",
-    "django-filter>=25.1",
-    "argon2-cffi>=23.1.0",
+    "django>=5.2.8,<5.3",
+    "djangorestframework>=3.16,<3.17",
+    "drf-spectacular>=0.28,<0.30",
+    "django-filter>=25.1,<26",
+    "argon2-cffi>=23.1,<26",
+    "psycopg[binary]>=3.2,<4",
+    "redis>=5,<7",
+    "pywebpush>=2,<3",
+    "cryptography>=46,<51",
+    "requests>=2.32,<3",
+    "gunicorn>=23,<24",
 ]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "pytest-django>=4.9,<5", "factory-boy>=3.3,<4", "ruff>=0.11,<1", "black>=25,<27", "pytest-cov>=6,<8"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.test_settings"
+pythonpath = [".", "src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.black]
+target-version = ["py312"]
 
 [project.scripts]
 nexora-backend = "nexora_backend:main"
