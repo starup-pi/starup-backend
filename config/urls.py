@@ -1,43 +1,78 @@
-"""
-URL configuration for config project.
+"""Only the scoped v1 API and the authenticated admin are exposed."""
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import include, path
-from drf_spectacular.views import (
-    SpectacularAPIView,
-    SpectacularRedocView,
-    SpectacularSwaggerView,
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from rest_framework.routers import SimpleRouter
+
+from nexora_backend.accounts.views import (
+    CsrfView,
+    LoginView,
+    LogoutView,
+    MeView,
+    RegistrationView,
 )
+from nexora_backend.common.pwa import pwa_file
+from nexora_backend.demands.views import CategoryViewSet, DemandViewSet
+from nexora_backend.feed.views import FeedView
+from nexora_backend.notifications.views import (
+    PushConfigView,
+    PushSubscriptionDetailView,
+    PushSubscriptionView,
+)
+from nexora_backend.profiles.views import OwnStartupViewSet, StartupViewSet
+from nexora_backend.reviews.views import ReviewCreateView
+from nexora_backend.solutions.views import SolutionViewSet
+
+router = SimpleRouter(use_regex_path=False)
+handler404 = "nexora_backend.common.errors.not_found"
+handler500 = "nexora_backend.common.errors.server_error"
+router.register("categories", CategoryViewSet, basename="category")
+router.register("demands", DemandViewSet, basename="demand")
+router.register("solutions", SolutionViewSet, basename="solution")
+router.register("startups", StartupViewSet, basename="startup")
+router.register("my-startups", OwnStartupViewSet, basename="own-startup")
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    # Front (CRUD via templates) das entidades base
-    path('', include('nexora_backend.usuarios.urls', namespace='usuarios')),
-    # Back (API REST) das entidades base
-    path('api/v1/', include('nexora_backend.usuarios.api_urls')),
-    # Open API Specification (OAS) e documentação interativa
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path("", pwa_file, name="pwa"),
+    *[
+        path(filename, pwa_file, {"filename": filename})
+        for filename in (
+            "app.js",
+            "app.css",
+            "service-worker.js",
+            "manifest.json",
+            "icon.svg",
+            "icon-192.png",
+            "icon-512.png",
+            "apple-touch-icon.png",
+            "privacy.html",
+        )
+    ],
+    path("admin/", admin.site.urls),
+    path("api/v1/auth/csrf/", CsrfView.as_view(), name="csrf"),
+    path("api/v1/auth/register/", RegistrationView.as_view(), name="register"),
+    path("api/v1/auth/login/", LoginView.as_view(), name="login"),
+    path("api/v1/auth/logout/", LogoutView.as_view(), name="logout"),
+    path("api/v1/me/", MeView.as_view(), name="me"),
+    path("api/v1/feed/", FeedView.as_view(), name="feed"),
+    path("api/v1/reviews/", ReviewCreateView.as_view(), name="review-create"),
+    path("api/v1/push/config/", PushConfigView.as_view(), name="push-config"),
     path(
-        'api/schema/swagger-ui/',
-        SpectacularSwaggerView.as_view(url_name='schema'),
-        name='swagger-ui',
+        "api/v1/push/subscriptions/",
+        PushSubscriptionView.as_view(),
+        name="push-subscribe",
     ),
     path(
-        'api/schema/redoc/',
-        SpectacularRedocView.as_view(url_name='schema'),
-        name='redoc',
+        "api/v1/push/subscriptions/<uuid:subscription_id>/",
+        PushSubscriptionDetailView.as_view(),
+        name="push-unsubscribe",
     ),
+    path("api/v1/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "api/v1/docs/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+    path("api/v1/", include(router.urls)),
 ]
