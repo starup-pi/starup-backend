@@ -1,4 +1,4 @@
-"""Environment-driven settings for the Nexora marketplace."""
+"""Environment-driven settings for the StarUP marketplace."""
 
 import os
 import sys
@@ -15,8 +15,8 @@ if not SECRET_KEY:
 DEBUG = os.environ.get("DJANGO_DEBUG", "false").lower() == "true"
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 AUTH_USER_MODEL = "usuarios.Usuario"
-AUTHENTICATION_BACKENDS = ["nexora_backend.accounts.backends.EmailBackend"]
-CSRF_FAILURE_VIEW = "nexora_backend.common.errors.csrf_failure"
+AUTHENTICATION_BACKENDS = ["starup_backend.accounts.backends.EmailBackend"]
+CSRF_FAILURE_VIEW = "starup_backend.common.errors.csrf_failure"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 INSTALLED_APPS = [
@@ -29,14 +29,14 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "django_filters",
-    "nexora_backend.usuarios.apps.UsuariosConfig",
-    "nexora_backend.profiles",
-    "nexora_backend.demands",
-    "nexora_backend.solutions",
-    "nexora_backend.reviews",
-    "nexora_backend.feed",
-    "nexora_backend.privacy",
-    "nexora_backend.notifications",
+    "starup_backend.usuarios.apps.UsuariosConfig",
+    "starup_backend.profiles",
+    "starup_backend.demands",
+    "starup_backend.solutions",
+    "starup_backend.reviews",
+    "starup_backend.feed",
+    "starup_backend.privacy",
+    "starup_backend.notifications",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -46,7 +46,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "nexora_backend.common.middleware.PrivateResponseMiddleware",
+    "starup_backend.common.middleware.PrivateResponseMiddleware",
 ]
 ROOT_URLCONF = "config.urls"
 TEMPLATES = [
@@ -68,8 +68,8 @@ ASGI_APPLICATION = "config.asgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB", "nexora"),
-        "USER": os.environ.get("POSTGRES_USER", "nexora"),
+        "NAME": os.environ.get("POSTGRES_DB", "starup"),
+        "USER": os.environ.get("POSTGRES_USER", "starup"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", ""),
         "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
         "PORT": os.environ.get("POSTGRES_PORT", "5432"),
@@ -132,11 +132,11 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.UserRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {"anon": "120/minute", "user": "300/minute"},
-    "EXCEPTION_HANDLER": "nexora_backend.common.errors.exception_handler",
+    "EXCEPTION_HANDLER": "starup_backend.common.errors.exception_handler",
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
 }
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Nexora API",
+    "TITLE": "StarUP API",
     "VERSION": "1.0.0",
     "DESCRIPTION": "Demandas, propostas, avaliações e feed público.",
     "SERVE_INCLUDE_SCHEMA": False,

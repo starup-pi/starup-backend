@@ -5,8 +5,8 @@ from django.contrib.auth import get_user_model
 from django.db import IntegrityError, transaction
 from rest_framework.test import APIClient
 
-from nexora_backend.accounts.serializers import RegistrationSerializer
-from nexora_backend.profiles.models import InvestorProfile
+from starup_backend.accounts.serializers import RegistrationSerializer
+from starup_backend.profiles.models import InvestorProfile
 from tests.factories import ClientFactory, InvestorFactory, StartupFactory, UserFactory
 
 pytestmark = pytest.mark.django_db

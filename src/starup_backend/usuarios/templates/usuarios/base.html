@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}StarUP{% endblock %} · Painel</title>
+    <style>
+        :root { color-scheme: light; }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            margin: 0; background: #f4f5f7; color: #1c1e21;
+        }
+        header {
+            background: #14213d; color: #fff; padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        header a { color: #fff; text-decoration: none; font-weight: 600; }
+        header nav a { margin-left: 1rem; font-weight: 400; opacity: .85; }
+        header nav a:hover { opacity: 1; text-decoration: underline; }
+        main { max-width: 1080px; margin: 2rem auto; padding: 0 1.5rem; }
+        h1 { font-size: 1.5rem; margin-bottom: .25rem; }
+        .subtitulo { color: #666; margin-top: 0; }
+        table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+        th, td { text-align: left; padding: .65rem .85rem; border-bottom: 1px solid #eee; font-size: .92rem; }
+        th { background: #fafafa; }
+        tr:hover td { background: #fafcff; }
+        .btn {
+            display: inline-block; padding: .5rem 1rem; border-radius: 6px;
+            background: #14213d; color: #fff; text-decoration: none; font-size: .9rem; border: none; cursor: pointer;
+        }
+        .btn:hover { background: #1f2f5c; }
+        .btn-secundario { background: #e5e7eb; color: #1c1e21; }
+        .btn-secundario:hover { background: #d1d5db; }
+        .btn-perigo { background: #b91c1c; }
+        .btn-perigo:hover { background: #991616; }
+        .acoes { display: flex; gap: .4rem; flex-wrap: wrap; }
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+        .card {
+            background: #fff; border-radius: 10px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,.08);
+            text-decoration: none; color: inherit; display: block;
+        }
+        .card:hover { box-shadow: 0 2px 10px rgba(0,0,0,.12); }
+        .card .total { font-size: 1.8rem; font-weight: 700; color: #14213d; }
+        .card .titulo { font-weight: 600; margin: .35rem 0 .15rem; }
+        .card .descricao { font-size: .85rem; color: #666; }
+        form p { margin-bottom: 1rem; }
+        form label { display: block; font-weight: 600; margin-bottom: .3rem; font-size: .9rem; }
+        form input, form select, form textarea {
+            width: 100%; padding: .5rem .6rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: .95rem;
+        }
+        .mensagens { list-style: none; padding: 0; margin: 0 0 1rem; }
+        .mensagens li { background: #ecfdf5; border: 1px solid #a7f3d0; padding: .6rem .9rem; border-radius: 6px; margin-bottom: .4rem; font-size: .9rem; }
+        .paginacao { margin-top: 1rem; display: flex; gap: .5rem; }
+        .vazio { padding: 2rem; text-align: center; color: #888; background: #fff; border-radius: 8px; }
+        dl { background: #fff; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+        dt { font-weight: 600; color: #555; font-size: .82rem; text-transform: uppercase; margin-top: .75rem; }
+        dd { margin: .1rem 0 0; font-size: 1rem; }
+    </style>
+</head>
+<body>
+<header>
+    <a href="{% url 'usuarios:home' %}">StarUP · Painel de Entidades Base</a>
+    <nav>
+        <a href="/api/schema/swagger-ui/">API Docs</a>
+        <a href="/admin/">Admin</a>
+    </nav>
+</header>
+<main>
+    {% if messages %}
+        <ul class="mensagens">
+            {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+        </ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+</main>
+</body>
+</html>

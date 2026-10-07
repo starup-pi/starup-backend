@@ -1,0 +1,340 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 1550" width="100%" height="100%" style="background-color: #0b0f19; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Filtros de Sombra e Estilo -->
+    <filter id="card-shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#58a6ff" />
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#3fb950" />
+    </marker>
+    <marker id="arrow-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#bc8cff" />
+    </marker>
+    <marker id="arrow-orange" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#f0883e" />
+    </marker>
+  </defs>
+
+  <!-- Cabeçalho Principal -->
+  <g transform="translate(60, 40)">
+    <rect width="2280" height="90" rx="12" fill="#161b22" stroke="#30363d" stroke-width="1.5" filter="url(#card-shadow)"/>
+    <rect x="25" y="22" width="130" height="46" rx="8" fill="#1f6feb"/>
+    <text x="90" y="52" fill="#ffffff" font-size="20" font-weight="900" text-anchor="middle" letter-spacing="2">StarUP</text>
+    <text x="180" y="45" fill="#f0f6fc" font-size="22" font-weight="bold">Diagrama Entidade-Relacionamento — Arquitetura de Dados e Métricas Auditadas</text>
+    <text x="180" y="70" fill="#8b949e" font-size="14">Engenharia de Dados com Separação de Perfis (RBAC), Telemetria Cega (LGPD) e Matchmaking com Editais/Eventos</text>
+    <text x="2100" y="55" fill="#58a6ff" font-size="14" font-weight="bold">Projeto Integrador</text>
+  </g>
+
+  <!-- ==================== COLUNA 1: IDENTIDADE E PERFIS BÁSICOS ==================== -->
+
+  <!-- USUARIO -->
+  <g transform="translate(60, 160)" filter="url(#card-shadow)">
+    <rect width="360" height="340" rx="10" fill="#161b22" stroke="#388bfd" stroke-width="2"/>
+    <path d="M 0 10 Q 0 0 10 0 L 350 0 Q 360 0 360 10 L 360 44 L 0 44 Z" fill="#1f6feb"/>
+    <text x="180" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">USUARIO</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#e6edf3" font-size="13">UK  email : VARCHAR(255) [NN]</text>
+    <text x="20" y="120" fill="#ff7b72" font-size="13">senha_hash : VARCHAR(255) [NN]</text>
+    <text x="20" y="145" fill="#e6edf3" font-size="13">    nome_civil : VARCHAR(150) [NN]</text>
+    <text x="20" y="170" fill="#8b949e" font-size="13">    telefone : VARCHAR(30)</text>
+    <text x="20" y="195" fill="#d2a8ff" font-size="13">    perfil_ativo : ENUM_PERFIL [NN]</text>
+    <text x="20" y="220" fill="#7ee787" font-size="13">termo_privacidade : BOOL [NN]</text>
+    <text x="20" y="245" fill="#8b949e" font-size="13">    data_aceite_termos : TIMESTAMP</text>
+    <text x="20" y="270" fill="#8b949e" font-size="13">    ativo : BOOLEAN [NN]</text>
+    <text x="20" y="295" fill="#8b949e" font-size="13">    criado_em : TIMESTAMP [NN]</text>
+    <text x="20" y="320" fill="#8b949e" font-size="13">    atualizado_em : TIMESTAMP [NN]</text>
+  </g>
+
+  <!-- LOG_AUDITORIA_LGPD -->
+  <g transform="translate(60, 530)" filter="url(#card-shadow)">
+    <rect width="360" height="230" rx="10" fill="#161b22" stroke="#6e7681" stroke-width="1.5"/>
+    <path d="M 0 10 Q 0 0 10 0 L 350 0 Q 360 0 360 10 L 360 44 L 0 44 Z" fill="#30363d"/>
+    <text x="180" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">LOG_AUDITORIA_LGPD</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#e6edf3" font-size="13">FK  usuario_id : UUID</text>
+    <text x="20" y="120" fill="#e6edf3" font-size="13">    acao_executada : VARCHAR(50) [NN]</text>
+    <text x="20" y="145" fill="#e6edf3" font-size="13">    recurso_acessado : VARCHAR(100) [NN]</text>
+    <text x="20" y="170" fill="#e6edf3" font-size="13">    ip_origem : VARCHAR(45) [NN]</text>
+    <text x="20" y="195" fill="#8b949e" font-size="13">    user_agent : VARCHAR(255)</text>
+    <text x="20" y="220" fill="#8b949e" font-size="13">    registrado_em : TIMESTAMP [NN]</text>
+  </g>
+
+  <!-- ==================== COLUNA 2: STARTUPS E PMEs ==================== -->
+
+  <!-- PERFIL_STARTUP -->
+  <g transform="translate(490, 160)" filter="url(#card-shadow)">
+    <rect width="380" height="310" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="2"/>
+    <path d="M 0 10 Q 0 0 10 0 L 370 0 Q 380 0 380 10 L 380 44 L 0 44 Z" fill="#0969da"/>
+    <text x="190" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">PERFIL_STARTUP</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#58a6ff" font-size="13">FK,UK usuario_id : UUID [NN]</text>
+    <text x="20" y="120" fill="#e6edf3" font-size="13">    nome_startup : VARCHAR(100) [NN]</text>
+    <text x="20" y="145" fill="#e6edf3" font-size="13">UK  cnpj : VARCHAR(18)</text>
+    <text x="20" y="170" fill="#8b949e" font-size="13">    website : VARCHAR(100)</text>
+    <text x="20" y="195" fill="#d2a8ff" font-size="13">    setor_mercado : ENUM_SETOR [NN]</text>
+    <text x="20" y="220" fill="#e6edf3" font-size="13">    estagio_desenvolvimento : ENUM [NN]</text>
+    <text x="20" y="245" fill="#8b949e" font-size="13">    pitch_resumido : VARCHAR(300) [NN]</text>
+    <text x="20" y="270" fill="#7ee787" font-size="13">pontuacao_reputacao : DECIMAL(4,2)</text>
+    <text x="20" y="295" fill="#7ee787" font-size="13">total_testes_concluidos : INT [NN]</text>
+  </g>
+
+  <!-- PERFIL_EMPRESA_CLIENTE -->
+  <g transform="translate(490, 510)" filter="url(#card-shadow)">
+    <rect width="380" height="250" rx="10" fill="#161b22" stroke="#238636" stroke-width="2"/>
+    <path d="M 0 10 Q 0 0 10 0 L 370 0 Q 380 0 380 10 L 380 44 L 0 44 Z" fill="#238636"/>
+    <text x="190" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">PERFIL_EMPRESA_CLIENTE (PME)</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#58a6ff" font-size="13">FK,UK usuario_id : UUID [NN]</text>
+    <text x="20" y="120" fill="#e6edf3" font-size="13">    razao_social : VARCHAR(120) [NN]</text>
+    <text x="20" y="145" fill="#e6edf3" font-size="13">    nome_fantasia : VARCHAR(100) [NN]</text>
+    <text x="20" y="170" fill="#e6edf3" font-size="13">UK  cnpj : VARCHAR(18) [NN]</text>
+    <text x="20" y="195" fill="#d2a8ff" font-size="13">    segmento_operacional : ENUM [NN]</text>
+    <text x="20" y="220" fill="#e6edf3" font-size="13">    porte_empresa : ENUM [NN]</text>
+    <text x="20" y="240" fill="#8b949e" font-size="13">    endereco_cidade_uf : VARCHAR(255) [NN]</text>
+  </g>
+
+  <!-- ==================== COLUNA 3: CICLO DE TESTES PRÁTICOS (NÚCLEO StarUP) ==================== -->
+
+  <!-- OFERTA_SERVICO_TESTE -->
+  <g transform="translate(940, 160)" filter="url(#card-shadow)">
+    <rect width="400" height="310" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="2"/>
+    <path d="M 0 10 Q 0 0 10 0 L 390 0 Q 400 0 400 10 L 400 44 L 0 44 Z" fill="#2ea043"/>
+    <text x="200" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">OFERTA_SERVICO_TESTE (30-45d)</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#58a6ff" font-size="13">FK  startup_id : UUID [NN]</text>
+    <text x="20" y="120" fill="#e6edf3" font-size="13">    titulo_oferta : VARCHAR(120) [NN]</text>
+    <text x="20" y="145" fill="#8b949e" font-size="13">    descricao_dor_resolvida : TEXT [NN]</text>
+    <text x="20" y="170" fill="#d2a8ff" font-size="13">    categoria_problema : ENUM_DOR [NN]</text>
+    <text x="20" y="195" fill="#f0883e" font-size="13">duracao_dias : INT (30 ou 45) [NN]</text>
+    <text x="20" y="220" fill="#7ee787" font-size="13">valor_simbolico : DECIMAL(10,2) [NN]</text>
+    <text x="20" y="245" fill="#d2a8ff" font-size="13">    modelo_remuneracao : ENUM [NN]</text>
+    <text x="20" y="270" fill="#8b949e" font-size="13">    metas_esperadas : TEXT [NN]</text>
+    <text x="20" y="295" fill="#7ee787" font-size="13">    status : ENUM_STATUS [NN]</text>
+  </g>
+
+  <!-- EXECUCAO_TESTE -->
+  <g transform="translate(940, 510)" filter="url(#card-shadow)">
+    <rect width="400" height="230" rx="10" fill="#161b22" stroke="#238636" stroke-width="2"/>
+    <path d="M 0 10 Q 0 0 10 0 L 390 0 Q 400 0 400 10 L 400 44 L 0 44 Z" fill="#238636"/>
+    <text x="200" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">EXECUCAO_TESTE (No Terreno)</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#58a6ff" font-size="13">FK  oferta_servico_id : UUID [NN]</text>
+    <text x="20" y="120" fill="#58a6ff" font-size="13">FK  empresa_cliente_id : UUID [NN]</text>
+    <text x="20" y="145" fill="#e6edf3" font-size="13">    data_inicio : DATE [NN]</text>
+    <text x="20" y="170" fill="#e6edf3" font-size="13">    data_termino_prevista : DATE [NN]</text>
+    <text x="20" y="195" fill="#8b949e" font-size="13">    data_encerramento_real : DATE</text>
+    <text x="20" y="220" fill="#d2a8ff" font-size="13">    status : ENUM_STATUS_EXEC [NN]</text>
+  </g>
+
+  <!-- MARCO_TESTE -->
+  <g transform="translate(940, 780)" filter="url(#card-shadow)">
+    <rect width="400" height="240" rx="10" fill="#161b22" stroke="#56d364" stroke-width="1.5"/>
+    <path d="M 0 10 Q 0 0 10 0 L 390 0 Q 400 0 400 10 L 400 44 L 0 44 Z" fill="#196c2e"/>
+    <text x="200" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">MARCO_TESTE (Checkpoints D10, D20)</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#58a6ff" font-size="13">FK  execucao_teste_id : UUID [NN]</text>
+    <text x="20" y="120" fill="#f0883e" font-size="13">dia_marco : INT [NN]</text>
+    <text x="20" y="145" fill="#e6edf3" font-size="13">    titulo_marco : VARCHAR(100) [NN]</text>
+    <text x="20" y="170" fill="#8b949e" font-size="13">    descricao_criterio : TEXT [NN]</text>
+    <text x="20" y="195" fill="#7ee787" font-size="13">validado_cliente : BOOLEAN [NN]</text>
+    <text x="20" y="220" fill="#8b949e" font-size="13">    data_validacao : TIMESTAMP</text>
+  </g>
+
+  <!-- RELATORIO_AUDITORIA_FINAL -->
+  <g transform="translate(940, 1060)" filter="url(#card-shadow)">
+    <rect width="400" height="270" rx="10" fill="#161b22" stroke="#f1e05a" stroke-width="2"/>
+    <path d="M 0 10 Q 0 0 10 0 L 390 0 Q 400 0 400 10 L 400 44 L 0 44 Z" fill="#b08800"/>
+    <text x="200" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">RELATORIO_AUDITORIA_FINAL</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#58a6ff" font-size="13">FK,UK execucao_teste_id : UUID [NN]</text>
+    <text x="20" y="120" fill="#7ee787" font-size="13">economia_apurada : DECIMAL(12,2) [NN]</text>
+    <text x="20" y="145" fill="#7ee787" font-size="13">ganho_eficiencia_pct : DECIMAL(5,2)</text>
+    <text x="20" y="170" fill="#e6edf3" font-size="13">horas_economizadas_mes : INT</text>
+    <text x="20" y="195" fill="#7ee787" font-size="13">nota_geral_avaliacao : DECIMAL(3,2) [NN]</text>
+    <text x="20" y="220" fill="#8b949e" font-size="13">depoimento_sincero_cliente : TEXT [NN]</text>
+    <text x="20" y="245" fill="#f1e05a" font-size="13">SELO_TESTE_AUDITADO : BOOL [NN]</text>
+  </g>
+
+  <!-- ==================== COLUNA 4: INVESTIDORES E TELEMETRIA CEGA ==================== -->
+
+  <!-- PERFIL_INVESTIDOR -->
+  <g transform="translate(1410, 160)" filter="url(#card-shadow)">
+    <rect width="420" height="290" rx="10" fill="#161b22" stroke="#a371f7" stroke-width="2"/>
+    <path d="M 0 10 Q 0 0 10 0 L 410 0 Q 420 0 420 10 L 420 44 L 0 44 Z" fill="#8957e5"/>
+    <text x="210" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">PERFIL_INVESTIDOR (Modo Leitor)</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#58a6ff" font-size="13">FK,UK usuario_id : UUID [NN]</text>
+    <text x="20" y="120" fill="#ff7b72" font-size="13">instituicao_origem : VARCHAR(120)</text>
+    <text x="20" y="145" fill="#ff7b72" font-size="13">cargo_funcao : VARCHAR(80)</text>
+    <text x="20" y="170" fill="#d2a8ff" font-size="13">    tipo_investidor : ENUM_INV [NN]</text>
+    <text x="20" y="195" fill="#d2a8ff" font-size="13">    teses_interesse : JSONB [NN]</text>
+    <text x="20" y="220" fill="#ff7b72" font-size="13">ticket_medio_min / max : DECIMAL(14,2)</text>
+    <text x="20" y="250" fill="#bc8cff" font-size="13" font-weight="bold">confidencialidade_ativa : BOOL [NN]</text>
+    <text x="20" y="275" fill="#8b949e" font-size="12">↳ Na vitrine exibe apenas 'Olá, Carlos'</text>
+  </g>
+
+  <!-- TELEMETRIA_ACESSO_VITRINE -->
+  <g transform="translate(1410, 490)" filter="url(#card-shadow)">
+    <rect width="420" height="210" rx="10" fill="#161b22" stroke="#8957e5" stroke-width="1.5"/>
+    <path d="M 0 10 Q 0 0 10 0 L 410 0 Q 420 0 420 10 L 420 44 L 0 44 Z" fill="#6e40c9"/>
+    <text x="210" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">TELEMETRIA_ACESSO_VITRINE</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#58a6ff" font-size="13">FK  oferta_servico_id : UUID [NN]</text>
+    <text x="20" y="120" fill="#bc8cff" font-size="13">hash_anonimizado_leitor : CHAR(64) [NN]</text>
+    <text x="20" y="145" fill="#d2a8ff" font-size="13">    tipo_evento : ENUM_TELEMETRIA [NN]</text>
+    <text x="20" y="170" fill="#8b949e" font-size="13">    instante_visualizacao : TIMESTAMP [NN]</text>
+    <text x="20" y="195" fill="#7ee787" font-size="12">↳ 'O seu serviço recebeu 1 nova leitura de mercado'</text>
+  </g>
+
+  <!-- CONEXAO_INVESTIDOR_STARTUP -->
+  <g transform="translate(1410, 740)" filter="url(#card-shadow)">
+    <rect width="420" height="240" rx="10" fill="#161b22" stroke="#d2a8ff" stroke-width="2"/>
+    <path d="M 0 10 Q 0 0 10 0 L 410 0 Q 420 0 420 10 L 420 44 L 0 44 Z" fill="#8957e5"/>
+    <text x="210" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">CONEXAO_INVESTIDOR_STARTUP</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#58a6ff" font-size="13">FK  investidor_id : UUID [NN]</text>
+    <text x="20" y="120" fill="#58a6ff" font-size="13">FK  startup_id : UUID [NN]</text>
+    <text x="20" y="145" fill="#58a6ff" font-size="13">FK  oferta_referencia_id : UUID [NN]</text>
+    <text x="20" y="170" fill="#8b949e" font-size="13">    mensagem_abertura : TEXT [NN]</text>
+    <text x="20" y="195" fill="#7ee787" font-size="13">identidade_revelada : BOOL (Opt-in)</text>
+    <text x="20" y="220" fill="#d2a8ff" font-size="13">    status_dialogo : ENUM [NN]</text>
+  </g>
+
+  <!-- ==================== COLUNA 5: FOMENTO, EDITAIS E EVENTOS ==================== -->
+
+  <!-- PERFIL_ENTIDADE_FOMENTO -->
+  <g transform="translate(1900, 160)" filter="url(#card-shadow)">
+    <rect width="440" height="240" rx="10" fill="#161b22" stroke="#d4a72c" stroke-width="2"/>
+    <path d="M 0 10 Q 0 0 10 0 L 430 0 Q 440 0 440 10 L 440 44 L 0 44 Z" fill="#9e6a03"/>
+    <text x="220" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">PERFIL_ENTIDADE_FOMENTO</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#58a6ff" font-size="13">FK,UK usuario_id : UUID [NN]</text>
+    <text x="20" y="120" fill="#e6edf3" font-size="13">    nome_instituicao : VARCHAR(120) [NN]</text>
+    <text x="20" y="145" fill="#e6edf3" font-size="13">UK  cnpj : VARCHAR(18) [NN]</text>
+    <text x="20" y="170" fill="#d2a8ff" font-size="13">    tipo_entidade : ENUM_ENTIDADE [NN]</text>
+    <text x="20" y="195" fill="#8b949e" font-size="13">    site_institucional : VARCHAR(100)</text>
+    <text x="20" y="220" fill="#7ee787" font-size="13">verificado_por_admin : BOOL [NN]</text>
+  </g>
+
+  <!-- EDITAL_DESAFIO -->
+  <g transform="translate(1900, 440)" filter="url(#card-shadow)">
+    <rect width="440" height="290" rx="10" fill="#161b22" stroke="#f0883e" stroke-width="2"/>
+    <path d="M 0 10 Q 0 0 10 0 L 430 0 Q 440 0 440 10 L 440 44 L 0 44 Z" fill="#bd561d"/>
+    <text x="220" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">EDITAL_DESAFIO (POCs e Fomento)</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#58a6ff" font-size="13">FK  entidade_promotora_id : UUID [NN]</text>
+    <text x="20" y="120" fill="#e6edf3" font-size="13">    titulo_edital : VARCHAR(150) [NN]</text>
+    <text x="20" y="145" fill="#d2a8ff" font-size="13">    tipo_fomento : ENUM [NN]</text>
+    <text x="20" y="170" fill="#7ee787" font-size="13">aporte_ou_premio : DECIMAL(14,2)</text>
+    <text x="20" y="195" fill="#d2a8ff" font-size="13">    setores_elegiveis : JSONB [NN]</text>
+    <text x="20" y="220" fill="#f1e05a" font-size="13">nota_minima_auditoria : DECIMAL(3,2)</text>
+    <text x="20" y="245" fill="#f1e05a" font-size="13">exige_selo_teste_concluido : BOOL [NN]</text>
+    <text x="20" y="270" fill="#8b949e" font-size="13">    data_abertura / encerramento : DATE</text>
+  </g>
+
+  <!-- INSCRICAO_EDITAL -->
+  <g transform="translate(1900, 770)" filter="url(#card-shadow)">
+    <rect width="440" height="230" rx="10" fill="#161b22" stroke="#ffa657" stroke-width="1.5"/>
+    <path d="M 0 10 Q 0 0 10 0 L 430 0 Q 440 0 440 10 L 440 44 L 0 44 Z" fill="#9e4915"/>
+    <text x="220" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">INSCRICAO_EDITAL (Matchmaking)</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#58a6ff" font-size="13">FK  edital_id : UUID [NN]</text>
+    <text x="20" y="120" fill="#58a6ff" font-size="13">FK  startup_id : UUID [NN]</text>
+    <text x="20" y="145" fill="#f1e05a" font-size="13">FK  relatorio_auditoria_id : UUID [NN]</text>
+    <text x="20" y="170" fill="#7ee787" font-size="13">score_match_calculado : DECIMAL(5,2)</text>
+    <text x="20" y="195" fill="#d2a8ff" font-size="13">    status_candidatura : ENUM [NN]</text>
+    <text x="20" y="220" fill="#8b949e" font-size="13">    submetido_em : TIMESTAMP [NN]</text>
+  </g>
+
+  <!-- EVENTO_ECOSSISTEMA -->
+  <g transform="translate(1900, 1040)" filter="url(#card-shadow)">
+    <rect width="440" height="230" rx="10" fill="#161b22" stroke="#f0883e" stroke-width="1.5"/>
+    <path d="M 0 10 Q 0 0 10 0 L 430 0 Q 440 0 440 10 L 440 44 L 0 44 Z" fill="#bd561d"/>
+    <text x="220" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">EVENTO_ECOSSISTEMA (Demodays)</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#58a6ff" font-size="13">FK  entidade_promotora_id : UUID [NN]</text>
+    <text x="20" y="120" fill="#e6edf3" font-size="13">    nome_evento : VARCHAR(150) [NN]</text>
+    <text x="20" y="145" fill="#d2a8ff" font-size="13">    formato : ENUM ('ONLINE', 'PRESENCIAL')</text>
+    <text x="20" y="170" fill="#8b949e" font-size="13">    local_ou_link : VARCHAR(255) [NN]</text>
+    <text x="20" y="195" fill="#f1e05a" font-size="13">exclusivo_startups_validadas : BOOL</text>
+    <text x="20" y="220" fill="#8b949e" font-size="13">    data_inicio / data_fim : TIMESTAMP</text>
+  </g>
+
+  <!-- INSCRICAO_EVENTO -->
+  <g transform="translate(1900, 1310)" filter="url(#card-shadow)">
+    <rect width="440" height="150" rx="10" fill="#161b22" stroke="#ffa657" stroke-width="1.5"/>
+    <path d="M 0 10 Q 0 0 10 0 L 430 0 Q 440 0 440 10 L 440 44 L 0 44 Z" fill="#9e4915"/>
+    <text x="220" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">INSCRICAO_EVENTO</text>
+    <text x="20" y="70" fill="#79c0ff" font-size="13" font-weight="bold">PK  id : UUID</text>
+    <text x="20" y="95" fill="#58a6ff" font-size="13">FK  evento_id : UUID [NN]</text>
+    <text x="20" y="120" fill="#58a6ff" font-size="13">FK  startup_id : UUID [NN]</text>
+    <text x="20" y="140" fill="#d2a8ff" font-size="12">    status : ENUM ('CONFIRMADA', 'ESPERA')</text>
+  </g>
+
+  <!-- ==================== LINHAS DE RELACIONAMENTO ==================== -->
+
+  <!-- USUARIO -> PERFIS -->
+  <path d="M 420 280 L 490 280" stroke="#58a6ff" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M 420 380 Q 450 380 450 600 L 490 600" stroke="#58a6ff" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 240 160 Q 240 120 1410 120 L 1410 160" stroke="#bc8cff" stroke-width="2" fill="none" marker-end="url(#arrow-purple)"/>
+  <path d="M 240 160 Q 240 100 1900 100 L 1900 160" stroke="#f0883e" stroke-width="2" fill="none" marker-end="url(#arrow-orange)"/>
+  <path d="M 240 500 L 240 530" stroke="#6e7681" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- STARTUP -> OFERTA_SERVICO_TESTE -->
+  <path d="M 870 280 L 940 280" stroke="#3fb950" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+
+  <!-- OFERTA_SERVICO + EMPRESA_CLIENTE -> EXECUCAO_TESTE -->
+  <path d="M 1140 470 L 1140 510" stroke="#3fb950" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+  <path d="M 870 620 L 940 620" stroke="#238636" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+  <!-- EXECUCAO_TESTE -> MARCO_TESTE -->
+  <path d="M 1140 740 L 1140 780" stroke="#56d364" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+  <!-- EXECUCAO_TESTE -> RELATORIO_AUDITORIA_FINAL -->
+  <path d="M 940 680 Q 900 680 900 1150 L 940 1150" stroke="#f1e05a" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- OFERTA -> TELEMETRIA_ACESSO_VITRINE -->
+  <path d="M 1340 300 Q 1380 300 1380 570 L 1410 570" stroke="#8957e5" stroke-width="2" fill="none" marker-end="url(#arrow-purple)"/>
+
+  <!-- INVESTIDOR -> TELEMETRIA -->
+  <path d="M 1620 450 L 1620 490" stroke="#8957e5" stroke-width="2" marker-end="url(#arrow-purple)"/>
+
+  <!-- INVESTIDOR -> CONEXAO_INVESTIDOR_STARTUP -->
+  <path d="M 1620 700 L 1620 740" stroke="#bc8cff" stroke-width="2" marker-end="url(#arrow-purple)"/>
+
+  <!-- RELATORIO_AUDITORIA -> INSCRICAO_EDITAL (CHANCELA AUDITADA) -->
+  <path d="M 1340 1180 Q 1700 1180 1700 880 L 1900 880" stroke="#f1e05a" stroke-width="3" fill="none" stroke-dasharray="6,4" marker-end="url(#arrow-orange)"/>
+
+  <!-- ENTIDADE_FOMENTO -> EDITAL / EVENTO -->
+  <path d="M 2120 400 L 2120 440" stroke="#f0883e" stroke-width="2" marker-end="url(#arrow-orange)"/>
+  <path d="M 2120 730 L 2120 770" stroke="#f0883e" stroke-width="2" marker-end="url(#arrow-orange)"/>
+  <path d="M 2120 1000 L 2120 1040" stroke="#f0883e" stroke-width="2" marker-end="url(#arrow-orange)"/>
+  <path d="M 2120 1270 L 2120 1310" stroke="#f0883e" stroke-width="2" marker-end="url(#arrow-orange)"/>
+
+  <!-- LEGENDA TÉCNICA -->
+  <g transform="translate(60, 1400)">
+    <rect width="1760" height="90" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+    <text x="30" y="35" fill="#f0f6fc" font-size="14" font-weight="bold">Legenda Arquitetural StarUP:</text>
+    
+    <circle cx="230" cy="30" r="7" fill="#1f6feb"/>
+    <text x="245" y="35" fill="#c9d1d9" font-size="13">Identidade &amp; RBAC</text>
+
+    <circle cx="430" cy="30" r="7" fill="#2ea043"/>
+    <text x="445" y="35" fill="#c9d1d9" font-size="13">Ciclo de Testes Reais (30-45d)</text>
+
+    <circle cx="710" cy="30" r="7" fill="#f1e05a"/>
+    <text x="725" y="35" fill="#c9d1d9" font-size="13">Selo de Auditoria &amp; Métricas</text>
+
+    <circle cx="990" cy="30" r="7" fill="#8957e5"/>
+    <text x="1005" y="35" fill="#c9d1d9" font-size="13">Modo Leitor Discreto &amp; Telemetria Cega</text>
+
+    <circle cx="1340" cy="30" r="7" fill="#f0883e"/>
+    <text x="1355" y="35" fill="#c9d1d9" font-size="13">Fomento, Editais e Demodays</text>
+
+    <text x="30" y="68" fill="#8b949e" font-size="12">Linha tracejada amarela: Vínculo documental obrigatório onde o relatório auditado substitui o pitch deck tradicional nos editais.</text>
+  </g>
+</svg>

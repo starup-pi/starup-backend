@@ -4,9 +4,9 @@ import pytest
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
-from nexora_backend.accounts.serializers import RegistrationSerializer
-from nexora_backend.profiles.models import ClientProfile
-from nexora_backend.profiles.validators import (
+from starup_backend.accounts.serializers import RegistrationSerializer
+from starup_backend.profiles.models import ClientProfile
+from starup_backend.profiles.validators import (
     normalize_document,
     validate_cnpj,
     validate_cpf,

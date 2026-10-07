@@ -6,11 +6,11 @@ from threading import Barrier
 import pytest
 from django.db import close_old_connections, connections
 
-from nexora_backend.common.errors import Conflict
-from nexora_backend.reviews.models import Review
-from nexora_backend.reviews.services import review_solution
-from nexora_backend.solutions.models import Solution
-from nexora_backend.solutions.services import transition_solution
+from starup_backend.common.errors import Conflict
+from starup_backend.reviews.models import Review
+from starup_backend.reviews.services import review_solution
+from starup_backend.solutions.models import Solution
+from starup_backend.solutions.services import transition_solution
 from tests.factories import SolutionFactory
 from tests.test_marketplace import delivered_solution
 

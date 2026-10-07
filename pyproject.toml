@@ -1,7 +1,7 @@
 [project]
-name = "nexora-backend"
+name = "starup-backend"
 version = "0.1.0"
-description = "Add your description here"
+description = "StarUP marketplace API for demands, solutions and startup reviews"
 authors = [
     { name = "JoaoSant7", email = "pedro_romano7@proton.me" }
 ]
@@ -39,7 +39,7 @@ select = ["E", "F", "I"]
 target-version = ["py312"]
 
 [project.scripts]
-nexora-backend = "nexora_backend:main"
+starup-backend = "starup_backend:main"
 
 [build-system]
 requires = ["uv_build>=0.12.10,<0.13.0"]

@@ -58,8 +58,8 @@ def test_legacy_copy_preserves_originals_and_reverse_removes_only_imports():
             estagio_desenvolvimento="MVP",
         )
         restore()
-        from nexora_backend.feed.models import FeedPost
-        from nexora_backend.profiles.models import (
+        from starup_backend.feed.models import FeedPost
+        from starup_backend.profiles.models import (
             ClientProfile,
             InvestorProfile,
             StartupProfile,

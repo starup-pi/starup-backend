@@ -6,8 +6,8 @@ import pytest
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from nexora_backend.demands.services import update_demand
-from nexora_backend.feed.models import FeedPost
+from starup_backend.demands.services import update_demand
+from starup_backend.feed.models import FeedPost
 from tests.factories import DemandFactory, StartupFactory
 from tests.test_marketplace import delivered_solution
 
@@ -46,7 +46,7 @@ def test_feed_query_count_does_not_grow_with_page_size(api_client):
 
 
 def test_mixed_feed_hydrates_in_batches(api_client):
-    from nexora_backend.reviews.services import review_solution
+    from starup_backend.reviews.services import review_solution
 
     client, startup, solution = delivered_solution()
     review_solution(actor=client.user, solution_id=solution.pk, rating=4)
@@ -62,7 +62,7 @@ def test_mixed_feed_hydrates_in_batches(api_client):
 
 
 def test_private_visibility_revokes_all_related_feed_posts(api_client):
-    from nexora_backend.reviews.services import review_solution
+    from starup_backend.reviews.services import review_solution
 
     client, _, solution = delivered_solution()
     update_demand(

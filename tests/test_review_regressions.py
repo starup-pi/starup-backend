@@ -2,8 +2,8 @@
 
 import pytest
 
-from nexora_backend.demands.services import update_demand
-from nexora_backend.reviews.services import review_solution
+from starup_backend.demands.services import update_demand
+from starup_backend.reviews.services import review_solution
 from tests.factories import ClientFactory, DemandFactory
 from tests.test_marketplace import delivered_solution
 

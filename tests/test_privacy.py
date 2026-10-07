@@ -6,11 +6,11 @@ import pytest
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from nexora_backend.common.roles import Role
-from nexora_backend.feed.models import FeedPost
-from nexora_backend.privacy.services import erase_account
-from nexora_backend.profiles.models import InvestorProfile, StartupProfile
-from nexora_backend.usuarios.models import PerfilInvestidor
+from starup_backend.common.roles import Role
+from starup_backend.feed.models import FeedPost
+from starup_backend.privacy.services import erase_account
+from starup_backend.profiles.models import InvestorProfile, StartupProfile
+from starup_backend.usuarios.models import PerfilInvestidor
 from tests.factories import (
     ClientFactory,
     DemandFactory,
@@ -142,7 +142,7 @@ def test_investor_erasure_covers_legacy_profile_and_sessions(csrf_client):
 
 def test_client_erasure_scrubs_history_text_and_withdraws_feed(api_client):
     client, _, solution = delivered_solution()
-    from nexora_backend.reviews.services import review_solution
+    from starup_backend.reviews.services import review_solution
 
     review_solution(actor=client.user, solution_id=solution.pk, rating=5)
     original_document = client.document

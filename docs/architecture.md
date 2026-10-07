@@ -1,4 +1,4 @@
-# Nexora: arquitetura do MVP
+# StarUP: arquitetura do MVP
 
 ## Fases 1 e 2: decisões consolidadas
 

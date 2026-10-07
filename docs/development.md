@@ -14,7 +14,7 @@ docker compose exec web pytest
 
 PWA em http://localhost:8000/. API /api/v1/, OpenAPI /api/v1/schema/ e documentação /api/v1/docs/ (autenticada). O admin só permite consultar identidade por superusuário e gerenciar categorias. Usuários do produto são criados pelo cadastro.
 
-Compose não expõe PostgreSQL ou Redis no host. O web usa runserver porque este Compose é de desenvolvimento. Para produção, construa o estágio runtime do Dockerfile (`docker build --target runtime -t nexora-backend .`), com Gunicorn como comando padrão; configure HTTPS, proxy confiável, assets estáticos, secrets, Redis protegido, backups e logging sem dados pessoais. Disponibilize o frontend em PWA_ROOT na implantação.
+Compose não expõe PostgreSQL ou Redis no host. O web usa runserver porque este Compose é de desenvolvimento. Para produção, construa o estágio runtime do Dockerfile (`docker build --target runtime -t starup-backend .`), com Gunicorn como comando padrão; configure HTTPS, proxy confiável, assets estáticos, secrets, Redis protegido, backups e logging sem dados pessoais. Disponibilize o frontend em PWA_ROOT na implantação.
 
 ## Python local
 
@@ -27,7 +27,7 @@ python -m venv .venv
 .venv/bin/python manage.py migrate
 .venv/bin/python manage.py runserver
 .venv/bin/python -m pytest
-.venv/bin/ruff check config src/nexora_backend/accounts src/nexora_backend/common src/nexora_backend/profiles src/nexora_backend/demands src/nexora_backend/solutions src/nexora_backend/reviews src/nexora_backend/feed src/nexora_backend/privacy src/nexora_backend/notifications tests
+.venv/bin/ruff check config src/starup_backend/accounts src/starup_backend/common src/starup_backend/profiles src/starup_backend/demands src/starup_backend/solutions src/starup_backend/reviews src/starup_backend/feed src/starup_backend/privacy src/starup_backend/notifications tests
 .venv/bin/python manage.py spectacular --file openapi.yaml --validate --fail-on-warn
 ```
 
@@ -55,6 +55,16 @@ Agende este comando na infraestrutura quando houver deploy. Ele envia notificaç
 ## Documentação anterior
 
 README original, ER SVG e modelagem de testes auditados são referências históricas. docs/architecture.md é a especificação do MVP atual e substitui a regra antiga de revelação do investidor. Esses documentos antigos serão harmonizados quando os módulos futuros entrarem no escopo.
+
+## Mudança de nome para StarUP
+
+O pacote Python e o comando de console agora são starup_backend e starup-backend. Imports históricos das migrações foram ajustados, mantendo app labels, dependências, operações e nomes de tabelas. A mudança de marca não exige migração de schema. Sessões emitidas com o caminho anterior do backend de autenticação exigem novo login.
+
+Para instalações novas, POSTGRES_DB e POSTGRES_USER usam starup como padrão. Em instalações existentes, mantenha essas variáveis com os valores atuais: renomear a marca não renomeia banco, usuário ou volume PostgreSQL.
+
+A PWA usa um novo shell versionado, remove caches da marca anterior quando a atualização é ativada e transfere a referência local da inscrição push. O id do manifesto, scope e start_url continuam na mesma origem. Os créditos de autoria originais em LICENSE foram preservados.
+
+A renomeação foi verificada com os mesmos 151 testes de backend e 9 testes do service worker, incluindo limpeza de caches legados. Migrações, system check e OpenAPI passaram; makemigrations não detectou alterações de schema. O novo pacote editável e comando de console foram instalados e verificados. No navegador com cache da marca anterior, a atualização explícita passou a exibir StarUP no título e no cabeçalho.
 
 ## Validação realizada em 2026-10-07
 

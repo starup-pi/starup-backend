@@ -1,4 +1,4 @@
-# NEXORA: Vitrine de Testes Reais para Startups
+# StarUP: Vitrine de Testes Reais para Startups
 
 > **MVP atual:** demanda → proposta → entrega → avaliação. Consulte
 > [arquitetura](docs/architecture.md) e [ambiente de desenvolvimento](docs/development.md).
@@ -20,11 +20,11 @@
 
 ---
 
-## 🎯 Sobre a Nexora
+## 🎯 Sobre a StarUP
 
-A **Nexora** é uma plataforma concebida para superar a barreira da desconfiança de mercado (*teatro da inovação* e falha de *product-market fit*) enfrentada por empresas iniciantes de base tecnológica. 
+A **StarUP** é uma plataforma concebida para superar a barreira da desconfiança de mercado (*teatro da inovação* e falha de *product-market fit*) enfrentada por empresas iniciantes de base tecnológica.
 
-Pequenas e médias empresas (PMEs) enfrentam problemas operacionais diários e necessitam resolvê-los com custos reduzidos. A Nexora conecta estas duas pontas através de **testes práticos de curta duração (30 a 45 dias)** na rotina de produção real, recolhendo validações ao longo do processo (Dia 10, Dia 20) e gerando **métricas auditadas** (economia em R$, horas salvas, nota e depoimento sincero) acompanhadas do selo *"Teste Concluído e Auditado"*.
+Pequenas e médias empresas (PMEs) enfrentam problemas operacionais diários e necessitam resolvê-los com custos reduzidos. A StarUP conecta estas duas pontas através de **testes práticos de curta duração (30 a 45 dias)** na rotina de produção real, recolhendo validações ao longo do processo (Dia 10, Dia 20) e gerando **métricas auditadas** (economia em R$, horas salvas, nota e depoimento sincero) acompanhadas do selo *"Teste Concluído e Auditado"*.
 
 ---
 
@@ -262,7 +262,7 @@ A arquitetura adota o princípio de **Privacy by Design**:
 
 ## 🤝 Matchmaking Baseado em Testes Reais
 
-A Nexora diferencia-se de plataformas tradicionais por ranquear oportunidades com base no **Score de Tração Prática ($S_{\text{match}}$)**:
+A StarUP diferencia-se de plataformas tradicionais por ranquear oportunidades com base no **Score de Tração Prática ($S_{\text{match}}$)**:
 
 $$S_{\text{match}} = (0.25 \times C_{\text{setor}}) + (0.35 \times M_{\text{auditoria}}) + (0.25 \times E_{\text{economia}}) + (0.15 \times T_{\text{maturidade}})$$
 
@@ -277,8 +277,8 @@ $$S_{\text{match}} = (0.25 \times C_{\text{setor}}) + (0.35 \times M_{\text{audi
 ```text
 projeto_pi/
 ├── docs/
-│   ├── modelagem_dados_e_arquitetura_nexora.md   # Dicionário de dados exaustivo, LGPD e estratégia de matchmaking
-│   ├── diagrama_dados_nexora.svg                 # Diagrama ER vetorial em alta resolução (abrir no navegador ou Figma)
+│   ├── modelagem_dados_e_arquitetura_starup.md   # Dicionário de dados exaustivo, LGPD e estratégia de matchmaking
+│   ├── diagrama_dados_starup.svg                 # Diagrama ER vetorial em alta resolução (abrir no navegador ou Figma)
 │   └── visualizador_diagrama_interativo.html     # Aplicação web local com zoom e exportador de imagem
 ├── .gitignore                                    # Arquivos ignorados pelo controle de versão
 └── README.md                                     # Apresentação do repositório

@@ -12,8 +12,8 @@ from pywebpush import WebPushException
 from requests import Session
 from requests.exceptions import Timeout
 
-from nexora_backend.notifications.models import PushMessage, PushSubscription
-from nexora_backend.notifications.services import (
+from starup_backend.notifications.models import PushMessage, PushSubscription
+from starup_backend.notifications.services import (
     PushSession,
     dispatch_pending,
     subscribe,
@@ -123,7 +123,7 @@ def test_push_dispatch_is_generic_and_marks_job():
     user = InvestorFactory().user
     subscribe(actor=user, data=push_data())
     message = PushMessage.objects.create(user=user)
-    with patch("nexora_backend.notifications.services.webpush") as send:
+    with patch("starup_backend.notifications.services.webpush") as send:
         assert dispatch_pending() == 1
     message.refresh_from_db()
     assert message.sent_at is not None
@@ -141,7 +141,7 @@ def test_expired_push_endpoint_is_removed():
     subscribe(actor=user, data=push_data())
     PushMessage.objects.create(user=user)
     error = WebPushException("Expired", response=SimpleNamespace(status_code=410))
-    with patch("nexora_backend.notifications.services.webpush", side_effect=error):
+    with patch("starup_backend.notifications.services.webpush", side_effect=error):
         dispatch_pending()
     assert not PushSubscription.objects.exists()
 
@@ -153,7 +153,7 @@ def test_push_timeout_keeps_job_for_retry():
     user = InvestorFactory().user
     subscribe(actor=user, data=push_data())
     message = PushMessage.objects.create(user=user)
-    with patch("nexora_backend.notifications.services.webpush", side_effect=Timeout()):
+    with patch("starup_backend.notifications.services.webpush", side_effect=Timeout()):
         assert dispatch_pending() == 0
     message.refresh_from_db()
     assert message.sent_at is None
@@ -163,7 +163,7 @@ def test_push_timeout_keeps_job_for_retry():
 def test_push_missing_vapid_fails_before_transport():
     with (
         pytest.raises(RuntimeError),
-        patch("nexora_backend.notifications.services.webpush") as send,
+        patch("starup_backend.notifications.services.webpush") as send,
     ):
         dispatch_pending()
     send.assert_not_called()

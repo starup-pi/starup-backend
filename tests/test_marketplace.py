@@ -4,15 +4,15 @@ import pytest
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 
-from nexora_backend.common.errors import Conflict
-from nexora_backend.demands.models import Demand
-from nexora_backend.demands.services import create_demand, update_demand
-from nexora_backend.feed.models import FeedPost
-from nexora_backend.profiles.selectors import public_startups
-from nexora_backend.reviews.models import Review
-from nexora_backend.reviews.services import review_solution
-from nexora_backend.solutions.models import Solution
-from nexora_backend.solutions.services import submit_solution, transition_solution
+from starup_backend.common.errors import Conflict
+from starup_backend.demands.models import Demand
+from starup_backend.demands.services import create_demand, update_demand
+from starup_backend.feed.models import FeedPost
+from starup_backend.profiles.selectors import public_startups
+from starup_backend.reviews.models import Review
+from starup_backend.reviews.services import review_solution
+from starup_backend.solutions.models import Solution
+from starup_backend.solutions.services import submit_solution, transition_solution
 from tests.factories import (
     CategoryFactory,
     ClientFactory,

@@ -3,14 +3,14 @@
 import factory
 from django.contrib.auth import get_user_model
 
-from nexora_backend.common.roles import Role
-from nexora_backend.demands.models import Category, Demand
-from nexora_backend.profiles.models import (
+from starup_backend.common.roles import Role
+from starup_backend.demands.models import Category, Demand
+from starup_backend.profiles.models import (
     ClientProfile,
     InvestorProfile,
     StartupProfile,
 )
-from nexora_backend.solutions.models import Solution
+from starup_backend.solutions.models import Solution
 
 
 def cpf_for(number: int) -> str:

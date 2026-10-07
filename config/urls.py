@@ -5,28 +5,28 @@ from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.routers import SimpleRouter
 
-from nexora_backend.accounts.views import (
+from starup_backend.accounts.views import (
     CsrfView,
     LoginView,
     LogoutView,
     MeView,
     RegistrationView,
 )
-from nexora_backend.common.pwa import pwa_file
-from nexora_backend.demands.views import CategoryViewSet, DemandViewSet
-from nexora_backend.feed.views import FeedView
-from nexora_backend.notifications.views import (
+from starup_backend.common.pwa import pwa_file
+from starup_backend.demands.views import CategoryViewSet, DemandViewSet
+from starup_backend.feed.views import FeedView
+from starup_backend.notifications.views import (
     PushConfigView,
     PushSubscriptionDetailView,
     PushSubscriptionView,
 )
-from nexora_backend.profiles.views import OwnStartupViewSet, StartupViewSet
-from nexora_backend.reviews.views import ReviewCreateView
-from nexora_backend.solutions.views import SolutionViewSet
+from starup_backend.profiles.views import OwnStartupViewSet, StartupViewSet
+from starup_backend.reviews.views import ReviewCreateView
+from starup_backend.solutions.views import SolutionViewSet
 
 router = SimpleRouter(use_regex_path=False)
-handler404 = "nexora_backend.common.errors.not_found"
-handler500 = "nexora_backend.common.errors.server_error"
+handler404 = "starup_backend.common.errors.not_found"
+handler500 = "starup_backend.common.errors.server_error"
 router.register("categories", CategoryViewSet, basename="category")
 router.register("demands", DemandViewSet, basename="demand")
 router.register("solutions", SolutionViewSet, basename="solution")

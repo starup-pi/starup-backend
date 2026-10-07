@@ -31,6 +31,8 @@ def test_pwa_assets_same_origin(api_client, path, content_type):
 def test_manifest_install_scope(api_client):
     response = api_client.get("/manifest.json")
     data = json.loads(b"".join(response.streaming_content))
+    assert data["name"] == "StarUP — demandas e soluções"
+    assert data["short_name"] == "StarUP"
     assert data["scope"] == "/" and data["start_url"] == "/"
     assert data["display"] == "standalone"
 

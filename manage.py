@@ -4,7 +4,7 @@ import os
 import sys
 from pathlib import Path
 
-# Projeto em layout `src/`: garante que `nexora_backend` seja importável mesmo
+# Projeto em layout `src/`: garante que `starup_backend` seja importável mesmo
 # quando executado com `python manage.py` fora de um ambiente uv sincronizado.
 sys.path.insert(0, str(Path(__file__).resolve().parent / 'src'))
 
