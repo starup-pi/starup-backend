@@ -1,5 +1,10 @@
 # NEXORA: Vitrine de Testes Reais para Startups
 
+> **MVP atual:** demanda → proposta → entrega → avaliação. Consulte
+> [arquitetura](docs/architecture.md) e [ambiente de desenvolvimento](docs/development.md).
+> O texto abaixo documenta o escopo histórico. Investidores agora são leitores privados;
+> revelação de identidade, auditorias, editais e eventos não estão implementados no MVP.
+
 > **Projeto Integrador — Imersão na Problemática, Engenharia de Dados e Protótipo**
 
 ---
