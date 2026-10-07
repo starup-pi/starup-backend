@@ -1,1889 +1,1257 @@
 openapi: 3.0.3
 info:
   title: Nexora API
-  version: 0.1.0
-  description: 'API REST das entidades base da Nexora: USUARIO e os perfis PERFIL_STARTUP,
-    PERFIL_EMPRESA_CLIENTE, PERFIL_INVESTIDOR e PERFIL_ENTIDADE_FOMENTO — a fundação
-    de autenticação/identidade sobre a qual o restante do domínio (ofertas, execuções
-    de teste, editais e eventos) é construído.'
+  version: 1.0.0
+  description: Demandas, propostas, avaliações e feed público.
 paths:
-  /api/v1/perfis-empresa-cliente/:
+  /api/v1/auth/csrf/:
     get:
-      operationId: perfis_empresa_cliente_list
-      description: CRUD da entidade PERFIL_EMPRESA_CLIENTE.
-      summary: Lista perfis de empresa cliente
-      parameters:
-      - name: ordering
-        required: false
-        in: query
-        description: Qual campo usar ao ordenar os resultados.
-        schema:
-          type: string
-      - name: page
-        required: false
-        in: query
-        description: Um número de página dentro do conjunto de resultados paginado.
-        schema:
-          type: integer
-      - in: query
-        name: porte_empresa
-        schema:
-          type: string
-          title: Porte da empresa
-          enum:
-          - EPP
-          - ME
-          - MEDIO_PORTE
-          - MEI
-        description: |-
-          * `MEI` - MEI
-          * `ME` - Microempresa
-          * `EPP` - Empresa de Pequeno Porte
-          * `MEDIO_PORTE` - Médio Porte
-      - name: search
-        required: false
-        in: query
-        description: Um termo de busca.
-        schema:
-          type: string
-      - in: query
-        name: segmento_operacional
-        schema:
-          type: string
-          enum:
-          - CLINICA
-          - DISTRIBUIDORA
-          - LOGISTICA_LOCAL
-          - MERCADO_VAREJO
-          - OFICINA_MECANICA
-          - OUTROS
-          - RESTAURANTE
-        description: |-
-          * `OFICINA_MECANICA` - Oficina Mecânica
-          * `MERCADO_VAREJO` - Mercado / Varejo
-          * `DISTRIBUIDORA` - Distribuidora
-          * `RESTAURANTE` - Restaurante
-          * `CLINICA` - Clínica
-          * `LOGISTICA_LOCAL` - Logística Local
-          * `OUTROS` - Outros
+      operationId: auth_csrf_retrieve
       tags:
-      - Perfil Empresa Cliente
+      - auth
       security:
-      - cookieAuth: []
-      - basicAuth: []
       - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedPerfilEmpresaClienteList'
+                $ref: '#/components/schemas/Csrf'
           description: ''
+  /api/v1/auth/login/:
     post:
-      operationId: perfis_empresa_cliente_create
-      description: CRUD da entidade PERFIL_EMPRESA_CLIENTE.
-      summary: Cria um perfil de empresa cliente
+      operationId: auth_login_create
       tags:
-      - Perfil Empresa Cliente
+      - auth
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PerfilEmpresaClienteRequest'
+              $ref: '#/components/schemas/LoginRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PerfilEmpresaClienteRequest'
+              $ref: '#/components/schemas/LoginRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PerfilEmpresaClienteRequest'
+              $ref: '#/components/schemas/LoginRequest'
         required: true
       security:
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PerfilEmpresaCliente'
-          description: ''
-  /api/v1/perfis-empresa-cliente/{id}/:
-    get:
-      operationId: perfis_empresa_cliente_retrieve
-      description: CRUD da entidade PERFIL_EMPRESA_CLIENTE.
-      summary: Detalha um perfil de empresa cliente
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Perfil de Empresa Cliente.
-        required: true
-      tags:
-      - Perfil Empresa Cliente
-      security:
-      - cookieAuth: []
-      - basicAuth: []
       - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PerfilEmpresaCliente'
+                $ref: '#/components/schemas/Csrf'
           description: ''
-    put:
-      operationId: perfis_empresa_cliente_update
-      description: CRUD da entidade PERFIL_EMPRESA_CLIENTE.
-      summary: Atualiza um perfil de empresa cliente (completo)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Perfil de Empresa Cliente.
-        required: true
+  /api/v1/auth/logout/:
+    post:
+      operationId: auth_logout_create
       tags:
-      - Perfil Empresa Cliente
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PerfilEmpresaClienteRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PerfilEmpresaClienteRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PerfilEmpresaClienteRequest'
-        required: true
+      - auth
       security:
       - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PerfilEmpresaCliente'
-          description: ''
-    patch:
-      operationId: perfis_empresa_cliente_partial_update
-      description: CRUD da entidade PERFIL_EMPRESA_CLIENTE.
-      summary: Atualiza um perfil de empresa cliente (parcial)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Perfil de Empresa Cliente.
-        required: true
-      tags:
-      - Perfil Empresa Cliente
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedPerfilEmpresaClienteRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedPerfilEmpresaClienteRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedPerfilEmpresaClienteRequest'
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PerfilEmpresaCliente'
-          description: ''
-    delete:
-      operationId: perfis_empresa_cliente_destroy
-      description: CRUD da entidade PERFIL_EMPRESA_CLIENTE.
-      summary: Remove um perfil de empresa cliente
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Perfil de Empresa Cliente.
-        required: true
-      tags:
-      - Perfil Empresa Cliente
-      security:
-      - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
-  /api/v1/perfis-entidade-fomento/:
+  /api/v1/auth/register/:
+    post:
+      operationId: auth_register_create
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+  /api/v1/categories/:
     get:
-      operationId: perfis_entidade_fomento_list
-      description: CRUD da entidade PERFIL_ENTIDADE_FOMENTO.
-      summary: Lista perfis de entidade de fomento
+      operationId: categories_list
       parameters:
-      - name: ordering
-        required: false
-        in: query
-        description: Qual campo usar ao ordenar os resultados.
-        schema:
-          type: string
       - name: page
         required: false
         in: query
         description: Um número de página dentro do conjunto de resultados paginado.
         schema:
           type: integer
-      - name: search
-        required: false
-        in: query
-        description: Um termo de busca.
-        schema:
-          type: string
+      tags:
+      - categories
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCategoryList'
+          description: ''
+  /api/v1/demands/:
+    get:
+      operationId: demands_list
+      parameters:
       - in: query
-        name: tipo_entidade
-        schema:
-          type: string
-          title: Tipo de entidade
-          enum:
-          - ACELERADORA
-          - ASSOCIACAO_SETORIAL
-          - GRANDE_EMPRESA
-          - HUB_INOVACAO
-          - ORGAO_GOVERNO
-        description: |-
-          * `GRANDE_EMPRESA` - Grande Empresa
-          * `HUB_INOVACAO` - Hub de Inovação
-          * `ACELERADORA` - Aceleradora
-          * `ORGAO_GOVERNO` - Órgão de Governo
-          * `ASSOCIACAO_SETORIAL` - Associação Setorial
-      - in: query
-        name: verificado_por_admin
+        name: mine
         schema:
           type: boolean
+          default: false
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+      - in: query
+        name: status
+        schema:
+          enum:
+          - OPEN
+          - IN_PROGRESS
+          - COMPLETED
+          - CANCELLED
+          type: string
+          minLength: 1
+        description: |-
+          * `OPEN` - OPEN
+          * `IN_PROGRESS` - IN_PROGRESS
+          * `COMPLETED` - COMPLETED
+          * `CANCELLED` - CANCELLED
+      - in: query
+        name: visibility
+        schema:
+          enum:
+          - PUBLIC
+          - PRIVATE
+          type: string
+          minLength: 1
+        description: |-
+          * `PUBLIC` - PUBLIC
+          * `PRIVATE` - PRIVATE
       tags:
-      - Perfil Entidade de Fomento
+      - demands
       security:
       - cookieAuth: []
-      - basicAuth: []
-      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedPerfilEntidadeFomentoList'
+                $ref: '#/components/schemas/PaginatedDemandList'
           description: ''
     post:
-      operationId: perfis_entidade_fomento_create
-      description: CRUD da entidade PERFIL_ENTIDADE_FOMENTO.
-      summary: Cria um perfil de entidade de fomento
+      operationId: demands_create
       tags:
-      - Perfil Entidade de Fomento
+      - demands
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PerfilEntidadeFomentoRequest'
+              $ref: '#/components/schemas/DemandWriteRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PerfilEntidadeFomentoRequest'
+              $ref: '#/components/schemas/DemandWriteRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PerfilEntidadeFomentoRequest'
+              $ref: '#/components/schemas/DemandWriteRequest'
         required: true
       security:
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PerfilEntidadeFomento'
+                $ref: '#/components/schemas/Demand'
           description: ''
-  /api/v1/perfis-entidade-fomento/{id}/:
+  /api/v1/demands/{id}/:
     get:
-      operationId: perfis_entidade_fomento_retrieve
-      description: CRUD da entidade PERFIL_ENTIDADE_FOMENTO.
-      summary: Detalha um perfil de entidade de fomento
+      operationId: demands_retrieve
       parameters:
       - in: path
         name: id
         schema:
           type: string
           format: uuid
-        description: Um string UUID que identifica este Perfil de Entidade de Fomento.
         required: true
       tags:
-      - Perfil Entidade de Fomento
+      - demands
       security:
       - cookieAuth: []
-      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Demand'
+          description: ''
+    patch:
+      operationId: demands_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - demands
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDemandWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDemandWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDemandWriteRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Demand'
+          description: ''
+  /api/v1/demands/{id}/cancel/:
+    post:
+      operationId: demands_cancel_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - demands
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Demand'
+          description: ''
+  /api/v1/feed/:
+    get:
+      operationId: feed_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: O valor do cursor de paginação.
+        schema:
+          type: string
+      tags:
+      - feed
+      security:
       - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PerfilEntidadeFomento'
+                $ref: '#/components/schemas/PaginatedFeedPostList'
           description: ''
-    put:
-      operationId: perfis_entidade_fomento_update
-      description: CRUD da entidade PERFIL_ENTIDADE_FOMENTO.
-      summary: Atualiza um perfil de entidade de fomento (completo)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Perfil de Entidade de Fomento.
-        required: true
+  /api/v1/me/:
+    get:
+      operationId: me_retrieve
       tags:
-      - Perfil Entidade de Fomento
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PerfilEntidadeFomentoRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PerfilEntidadeFomentoRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PerfilEntidadeFomentoRequest'
-        required: true
+      - me
       security:
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PerfilEntidadeFomento'
-          description: ''
-    patch:
-      operationId: perfis_entidade_fomento_partial_update
-      description: CRUD da entidade PERFIL_ENTIDADE_FOMENTO.
-      summary: Atualiza um perfil de entidade de fomento (parcial)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Perfil de Entidade de Fomento.
-        required: true
-      tags:
-      - Perfil Entidade de Fomento
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedPerfilEntidadeFomentoRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedPerfilEntidadeFomentoRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedPerfilEntidadeFomentoRequest'
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PerfilEntidadeFomento'
+                $ref: '#/components/schemas/PrivateAccount'
           description: ''
     delete:
-      operationId: perfis_entidade_fomento_destroy
-      description: CRUD da entidade PERFIL_ENTIDADE_FOMENTO.
-      summary: Remove um perfil de entidade de fomento
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Perfil de Entidade de Fomento.
-        required: true
+      operationId: me_destroy
       tags:
-      - Perfil Entidade de Fomento
+      - me
       security:
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
-  /api/v1/perfis-investidor/:
-    get:
-      operationId: perfis_investidor_list
-      description: CRUD da entidade PERFIL_INVESTIDOR.
-      summary: Lista perfis de investidor
+  /api/v1/my-startups/{id}/:
+    patch:
+      operationId: my_startups_partial_update
       parameters:
-      - in: query
-        name: confidencialidade_ativa
-        schema:
-          type: boolean
-      - name: ordering
-        required: false
-        in: query
-        description: Qual campo usar ao ordenar os resultados.
+      - in: path
+        name: id
         schema:
           type: string
+          format: uuid
+        required: true
+      tags:
+      - my-startups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStartupUpdateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStartupUpdateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStartupUpdateRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/push/config/:
+    get:
+      operationId: push_config_retrieve
+      tags:
+      - push
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PushConfig'
+          description: ''
+  /api/v1/push/subscriptions/:
+    post:
+      operationId: push_subscriptions_create
+      tags:
+      - push
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushSubscriptionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PushSubscriptionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PushSubscriptionRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PushSubscriptionResult'
+          description: ''
+  /api/v1/push/subscriptions/{subscription_id}/:
+    delete:
+      operationId: push_subscriptions_destroy
+      parameters:
+      - in: path
+        name: subscription_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - push
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/reviews/:
+    post:
+      operationId: reviews_create
+      tags:
+      - reviews
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReviewCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReviewCreateRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+          description: ''
+  /api/v1/solutions/:
+    get:
+      operationId: solutions_list
+      parameters:
       - name: page
         required: false
         in: query
         description: Um número de página dentro do conjunto de resultados paginado.
         schema:
           type: integer
-      - name: search
-        required: false
-        in: query
-        description: Um termo de busca.
-        schema:
-          type: string
-      - in: query
-        name: tipo_investidor
-        schema:
-          type: string
-          title: Tipo de investidor
-          enum:
-          - ANJO
-          - CORPORATE_VC
-          - PRE_SEED
-          - SEED
-          - VENTURE_CAPITAL
-        description: |-
-          * `ANJO` - Investidor Anjo
-          * `PRE_SEED` - Pré-Seed
-          * `SEED` - Seed
-          * `VENTURE_CAPITAL` - Venture Capital
-          * `CORPORATE_VC` - Corporate VC
       tags:
-      - Perfil Investidor
+      - solutions
       security:
       - cookieAuth: []
-      - basicAuth: []
-      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedPerfilInvestidorList'
+                $ref: '#/components/schemas/PaginatedSolutionList'
           description: ''
     post:
-      operationId: perfis_investidor_create
-      description: CRUD da entidade PERFIL_INVESTIDOR.
-      summary: Cria um perfil de investidor
+      operationId: solutions_create
       tags:
-      - Perfil Investidor
+      - solutions
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PerfilInvestidorRequest'
+              $ref: '#/components/schemas/SolutionCreateRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PerfilInvestidorRequest'
+              $ref: '#/components/schemas/SolutionCreateRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PerfilInvestidorRequest'
+              $ref: '#/components/schemas/SolutionCreateRequest'
         required: true
       security:
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PerfilInvestidor'
+                $ref: '#/components/schemas/Solution'
           description: ''
-  /api/v1/perfis-investidor/{id}/:
+  /api/v1/solutions/{id}/:
     get:
-      operationId: perfis_investidor_retrieve
-      description: CRUD da entidade PERFIL_INVESTIDOR.
-      summary: Detalha um perfil de investidor
+      operationId: solutions_retrieve
       parameters:
       - in: path
         name: id
         schema:
           type: string
           format: uuid
-        description: Um string UUID que identifica este Perfil de Investidor.
         required: true
       tags:
-      - Perfil Investidor
+      - solutions
       security:
       - cookieAuth: []
-      - basicAuth: []
-      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PerfilInvestidor'
+                $ref: '#/components/schemas/Solution'
           description: ''
-    put:
-      operationId: perfis_investidor_update
-      description: CRUD da entidade PERFIL_INVESTIDOR.
-      summary: Atualiza um perfil de investidor (completo)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Perfil de Investidor.
-        required: true
-      tags:
-      - Perfil Investidor
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PerfilInvestidorRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PerfilInvestidorRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PerfilInvestidorRequest'
-        required: true
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PerfilInvestidor'
-          description: ''
-    patch:
-      operationId: perfis_investidor_partial_update
-      description: CRUD da entidade PERFIL_INVESTIDOR.
-      summary: Atualiza um perfil de investidor (parcial)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Perfil de Investidor.
-        required: true
-      tags:
-      - Perfil Investidor
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedPerfilInvestidorRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedPerfilInvestidorRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedPerfilInvestidorRequest'
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PerfilInvestidor'
-          description: ''
-    delete:
-      operationId: perfis_investidor_destroy
-      description: CRUD da entidade PERFIL_INVESTIDOR.
-      summary: Remove um perfil de investidor
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Perfil de Investidor.
-        required: true
-      tags:
-      - Perfil Investidor
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '204':
-          description: No response body
-  /api/v1/perfis-startup/:
+  /api/v1/solutions/{id}/history/:
     get:
-      operationId: perfis_startup_list
-      description: CRUD da entidade PERFIL_STARTUP.
-      summary: Lista perfis de startup
+      operationId: solutions_history_list
       parameters:
-      - in: query
-        name: estagio_desenvolvimento
+      - in: path
+        name: id
         schema:
           type: string
-          title: Estágio de desenvolvimento
-          enum:
-          - ESCALA
-          - MVP
-          - PROTOTIPO
-          - TRAÇÃO_INICIAL
-        description: |-
-          * `PROTOTIPO` - Protótipo
-          * `MVP` - MVP
-          * `TRAÇÃO_INICIAL` - Tração Inicial
-          * `ESCALA` - Escala
-      - name: ordering
-        required: false
-        in: query
-        description: Qual campo usar ao ordenar os resultados.
-        schema:
-          type: string
+          format: uuid
+        required: true
       - name: page
         required: false
         in: query
         description: Um número de página dentro do conjunto de resultados paginado.
         schema:
           type: integer
-      - name: search
-        required: false
-        in: query
-        description: Um termo de busca.
-        schema:
-          type: string
-      - in: query
-        name: setor_mercado
-        schema:
-          type: string
-          title: Setor de mercado
-          enum:
-          - AGRO
-          - EDUCACAO
-          - FINANCAS
-          - LOGISTICA
-          - OUTROS
-          - SAUDE
-          - SERVICOS
-          - VAREJO
-        description: |-
-          * `LOGISTICA` - Logística
-          * `FINANCAS` - Finanças
-          * `VAREJO` - Varejo
-          * `SAUDE` - Saúde
-          * `AGRO` - Agro
-          * `EDUCACAO` - Educação
-          * `SERVICOS` - Serviços
-          * `OUTROS` - Outros
       tags:
-      - Perfil Startup
+      - solutions
       security:
       - cookieAuth: []
-      - basicAuth: []
-      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedPerfilStartupList'
+                $ref: '#/components/schemas/PaginatedStatusEventList'
           description: ''
+  /api/v1/solutions/{id}/transition/:
     post:
-      operationId: perfis_startup_create
-      description: CRUD da entidade PERFIL_STARTUP.
-      summary: Cria um perfil de startup
+      operationId: solutions_transition_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
       tags:
-      - Perfil Startup
+      - solutions
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PerfilStartupRequest'
+              $ref: '#/components/schemas/SolutionTransitionRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PerfilStartupRequest'
+              $ref: '#/components/schemas/SolutionTransitionRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PerfilStartupRequest'
+              $ref: '#/components/schemas/SolutionTransitionRequest'
         required: true
       security:
       - cookieAuth: []
-      - basicAuth: []
       responses:
-        '201':
+        '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PerfilStartup'
+                $ref: '#/components/schemas/Solution'
           description: ''
-  /api/v1/perfis-startup/{id}/:
+  /api/v1/startups/:
     get:
-      operationId: perfis_startup_retrieve
-      description: CRUD da entidade PERFIL_STARTUP.
-      summary: Detalha um perfil de startup
+      operationId: startups_list
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Perfil de Startup.
-        required: true
-      tags:
-      - Perfil Startup
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PerfilStartup'
-          description: ''
-    put:
-      operationId: perfis_startup_update
-      description: CRUD da entidade PERFIL_STARTUP.
-      summary: Atualiza um perfil de startup (completo)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Perfil de Startup.
-        required: true
-      tags:
-      - Perfil Startup
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PerfilStartupRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PerfilStartupRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PerfilStartupRequest'
-        required: true
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PerfilStartup'
-          description: ''
-    patch:
-      operationId: perfis_startup_partial_update
-      description: CRUD da entidade PERFIL_STARTUP.
-      summary: Atualiza um perfil de startup (parcial)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Perfil de Startup.
-        required: true
-      tags:
-      - Perfil Startup
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedPerfilStartupRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedPerfilStartupRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedPerfilStartupRequest'
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PerfilStartup'
-          description: ''
-    delete:
-      operationId: perfis_startup_destroy
-      description: CRUD da entidade PERFIL_STARTUP.
-      summary: Remove um perfil de startup
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Perfil de Startup.
-        required: true
-      tags:
-      - Perfil Startup
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '204':
-          description: No response body
-  /api/v1/usuarios/:
-    get:
-      operationId: usuarios_list
-      description: CRUD da entidade USUARIO (identidade canônica de acesso).
-      summary: Lista usuários
-      parameters:
-      - in: query
-        name: ativo
-        schema:
-          type: boolean
-      - name: ordering
-        required: false
-        in: query
-        description: Qual campo usar ao ordenar os resultados.
-        schema:
-          type: string
       - name: page
         required: false
         in: query
         description: Um número de página dentro do conjunto de resultados paginado.
         schema:
           type: integer
-      - in: query
-        name: perfil_ativo
-        schema:
-          type: string
-          enum:
-          - ADMIN
-          - EMPRESA_CLIENTE
-          - ENTIDADE_FOMENTO
-          - INVESTIDOR
-          - STARTUP
-        description: |-
-          * `STARTUP` - Startup
-          * `EMPRESA_CLIENTE` - Empresa Cliente
-          * `INVESTIDOR` - Investidor
-          * `ENTIDADE_FOMENTO` - Entidade de Fomento
-          * `ADMIN` - Administrador
-      - name: search
-        required: false
-        in: query
-        description: Um termo de busca.
-        schema:
-          type: string
       tags:
-      - Usuários
+      - startups
       security:
-      - cookieAuth: []
-      - basicAuth: []
       - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedUsuarioList'
+                $ref: '#/components/schemas/PaginatedPublicStartupList'
           description: ''
-    post:
-      operationId: usuarios_create
-      description: CRUD da entidade USUARIO (identidade canônica de acesso).
-      summary: Cria um usuário
-      tags:
-      - Usuários
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UsuarioRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UsuarioRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UsuarioRequest'
-        required: true
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Usuario'
-          description: ''
-  /api/v1/usuarios/{id}/:
+  /api/v1/startups/{id}/:
     get:
-      operationId: usuarios_retrieve
-      description: CRUD da entidade USUARIO (identidade canônica de acesso).
-      summary: Detalha um usuário
+      operationId: startups_retrieve
       parameters:
       - in: path
         name: id
         schema:
           type: string
           format: uuid
-        description: Um string UUID que identifica este Usuário.
         required: true
       tags:
-      - Usuários
+      - startups
       security:
-      - cookieAuth: []
-      - basicAuth: []
       - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Usuario'
+                $ref: '#/components/schemas/PublicStartup'
           description: ''
-    put:
-      operationId: usuarios_update
-      description: CRUD da entidade USUARIO (identidade canônica de acesso).
-      summary: Atualiza um usuário (completo)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Usuário.
-        required: true
-      tags:
-      - Usuários
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UsuarioRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UsuarioRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UsuarioRequest'
-        required: true
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Usuario'
-          description: ''
-    patch:
-      operationId: usuarios_partial_update
-      description: CRUD da entidade USUARIO (identidade canônica de acesso).
-      summary: Atualiza um usuário (parcial)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Usuário.
-        required: true
-      tags:
-      - Usuários
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedUsuarioRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedUsuarioRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedUsuarioRequest'
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Usuario'
-          description: ''
-    delete:
-      operationId: usuarios_destroy
-      description: CRUD da entidade USUARIO (identidade canônica de acesso).
-      summary: Remove um usuário
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: Um string UUID que identifica este Usuário.
-        required: true
-      tags:
-      - Usuários
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '204':
-          description: No response body
 components:
   schemas:
-    EstagioDesenvolvimentoEnum:
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        name:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - name
+      - slug
+    Csrf:
+      type: object
+      properties:
+        csrf_token:
+          type: string
+        policy_version:
+          type: string
+      required:
+      - csrf_token
+    Demand:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        category_id:
+          type: string
+          format: uuid
+        category_name:
+          type: string
+        status:
+          type: string
+        visibility:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - category_id
+      - category_name
+      - completed_at
+      - created_at
+      - description
+      - id
+      - status
+      - title
+      - updated_at
+      - visibility
+    DemandFeed:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          $ref: '#/components/schemas/DemandFeedKindEnum'
+        published_at:
+          type: string
+          format: date-time
+        content:
+          $ref: '#/components/schemas/Demand'
+      required:
+      - content
+      - id
+      - kind
+      - published_at
+    DemandFeedKindEnum:
       enum:
-      - PROTOTIPO
-      - MVP
-      - TRAÇÃO_INICIAL
-      - ESCALA
+      - DEMAND
       type: string
-      description: |-
-        * `PROTOTIPO` - Protótipo
-        * `MVP` - MVP
-        * `TRAÇÃO_INICIAL` - Tração Inicial
-        * `ESCALA` - Escala
-    PaginatedPerfilEmpresaClienteList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/PerfilEmpresaCliente'
-    PaginatedPerfilEntidadeFomentoList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/PerfilEntidadeFomento'
-    PaginatedPerfilInvestidorList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/PerfilInvestidor'
-    PaginatedPerfilStartupList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/PerfilStartup'
-    PaginatedUsuarioList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Usuario'
-    PatchedPerfilEmpresaClienteRequest:
+      description: '* `DEMAND` - DEMAND'
+    DemandWriteRequest:
       type: object
       properties:
-        usuario:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 160
+        description:
+          type: string
+          minLength: 1
+          maxLength: 10000
+        category_id:
           type: string
           format: uuid
-          title: Usuário
-        razao_social:
-          type: string
-          minLength: 1
-          title: Razão social
-          maxLength: 120
-        nome_fantasia:
-          type: string
-          minLength: 1
-          maxLength: 100
-        cnpj:
-          type: string
-          minLength: 1
-          maxLength: 18
-        segmento_operacional:
-          $ref: '#/components/schemas/SegmentoOperacionalEnum'
-        porte_empresa:
+        visibility:
           allOf:
-          - $ref: '#/components/schemas/PorteEmpresaEnum'
-          title: Porte da empresa
-        endereco_cidade_uf:
-          type: string
-          minLength: 1
-          title: Cidade / UF
-          maxLength: 255
-    PatchedPerfilEntidadeFomentoRequest:
+          - $ref: '#/components/schemas/VisibilityEnum'
+          default: PUBLIC
+      required:
+      - category_id
+      - description
+      - title
+    FeedPost:
+      oneOf:
+      - $ref: '#/components/schemas/DemandFeed'
+      - $ref: '#/components/schemas/StartupFeed'
+      - $ref: '#/components/schemas/ReviewedSolutionFeed'
+      discriminator:
+        propertyName: kind
+        mapping:
+          DEMAND: '#/components/schemas/DemandFeed'
+          STARTUP: '#/components/schemas/StartupFeed'
+          REVIEWED_SOLUTION: '#/components/schemas/ReviewedSolutionFeed'
+    LoginRequest:
       type: object
-      properties:
-        usuario:
-          type: string
-          format: uuid
-          title: Usuário
-        nome_instituicao:
-          type: string
-          minLength: 1
-          title: Nome da instituição
-          maxLength: 120
-        cnpj:
-          type: string
-          minLength: 1
-          maxLength: 18
-        tipo_entidade:
-          allOf:
-          - $ref: '#/components/schemas/TipoEntidadeEnum'
-          title: Tipo de entidade
-        site_institucional:
-          type: string
-          nullable: true
-          maxLength: 100
-        verificado_por_admin:
-          type: boolean
-          title: Verificado por administrador
-    PatchedPerfilInvestidorRequest:
-      type: object
-      properties:
-        usuario:
-          type: string
-          format: uuid
-          title: Usuário
-        instituicao_origem:
-          type: string
-          nullable: true
-          title: Instituição de origem
-          maxLength: 120
-        cargo_funcao:
-          type: string
-          nullable: true
-          title: Cargo / função
-          maxLength: 80
-        tipo_investidor:
-          allOf:
-          - $ref: '#/components/schemas/TipoInvestidorEnum'
-          title: Tipo de investidor
-        teses_interesse:
-          title: Teses de interesse
-        ticket_medio_min:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
-          nullable: true
-          title: Ticket médio mínimo
-        ticket_medio_max:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
-          nullable: true
-          title: Ticket médio máximo
-        confidencialidade_ativa:
-          type: boolean
-    PatchedPerfilStartupRequest:
-      type: object
-      properties:
-        usuario:
-          type: string
-          format: uuid
-          title: Usuário
-        nome_startup:
-          type: string
-          minLength: 1
-          title: Nome da startup
-          maxLength: 100
-        cnpj:
-          type: string
-          nullable: true
-          maxLength: 18
-        website:
-          type: string
-          nullable: true
-          maxLength: 100
-        setor_mercado:
-          allOf:
-          - $ref: '#/components/schemas/SetorMercadoEnum'
-          title: Setor de mercado
-        estagio_desenvolvimento:
-          allOf:
-          - $ref: '#/components/schemas/EstagioDesenvolvimentoEnum'
-          title: Estágio de desenvolvimento
-        pitch_resumido:
-          type: string
-          minLength: 1
-          maxLength: 300
-        pontuacao_reputacao:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,2}(?:\.\d{0,2})?$
-          title: Pontuação de reputação
-        total_testes_concluidos:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          title: Total de testes concluídos
-    PatchedUsuarioRequest:
-      type: object
-      description: |-
-        Serializer do USUARIO. A senha nunca é lida de volta (write_only) e é
-        sempre gravada via `set_password`, garantindo o hash Argon2id.
       properties:
         email:
           type: string
           format: email
           minLength: 1
-          title: E-mail
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+          maxLength: 128
+      required:
+      - email
+      - password
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    PaginatedCategoryList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+    PaginatedDemandList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Demand'
+    PaginatedFeedPostList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeedPost'
+    PaginatedPublicStartupList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicStartup'
+    PaginatedSolutionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Solution'
+    PaginatedStatusEventList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatusEvent'
+    PatchedDemandWriteRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 160
+        description:
+          type: string
+          minLength: 1
+          maxLength: 10000
+        category_id:
+          type: string
+          format: uuid
+        visibility:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityEnum'
+          default: PUBLIC
+    PatchedStartupUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 300
+        website:
+          type: string
+          format: uri
+    PersonTypeEnum:
+      enum:
+      - PF
+      - PJ
+      type: string
+      description: |-
+        * `PF` - PF
+        * `PJ` - PJ
+    PrivateAccount:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+        legal_name:
+          type: string
+        profile:
+          type: object
+          additionalProperties: {}
+      required:
+      - email
+      - id
+      - legal_name
+      - profile
+      - role
+    PublicStartup:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        website:
+          type: string
+        category:
+          type: string
+        average_rating:
+          type: number
+          format: double
+          nullable: true
+        review_count:
+          type: integer
+      required:
+      - average_rating
+      - category
+      - description
+      - id
+      - name
+      - review_count
+      - website
+    PushConfig:
+      type: object
+      properties:
+        public_key:
+          type: string
+      required:
+      - public_key
+    PushKeysRequest:
+      type: object
+      properties:
+        p256dh:
+          type: string
+          minLength: 1
+          maxLength: 128
+        auth:
+          type: string
+          minLength: 1
+          maxLength: 64
+      required:
+      - auth
+      - p256dh
+    PushSubscriptionRequest:
+      type: object
+      properties:
+        endpoint:
+          type: string
+          format: uri
+          minLength: 1
+          maxLength: 2048
+        keys:
+          $ref: '#/components/schemas/PushKeysRequest'
+        consent:
+          type: boolean
+      required:
+      - consent
+      - endpoint
+      - keys
+    PushSubscriptionResult:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+      required:
+      - id
+    RegistrationRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
           maxLength: 255
         password:
           type: string
           writeOnly: true
-          minLength: 8
-        nome_civil:
+          minLength: 1
+          maxLength: 128
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        policy_version:
           type: string
           minLength: 1
-          maxLength: 150
-        telefone:
+          maxLength: 32
+        legal_name:
           type: string
-          nullable: true
-          maxLength: 30
-        perfil_ativo:
-          $ref: '#/components/schemas/PerfilAtivoEnum'
-        termo_privacidade_aceito:
-          type: boolean
-          title: Termo de privacidade aceito
-        ativo:
-          type: boolean
-    PerfilAtivoEnum:
+          maxLength: 150
+        person_type:
+          $ref: '#/components/schemas/PersonTypeEnum'
+        document:
+          type: string
+          minLength: 1
+          maxLength: 32
+        display_name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        startup_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 300
+        website:
+          type: string
+          format: uri
+      required:
+      - email
+      - password
+      - policy_version
+      - role
+    Review:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        solution_id:
+          type: string
+          format: uuid
+        rating:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - created_at
+      - id
+      - rating
+      - solution_id
+    ReviewCreateRequest:
+      type: object
+      properties:
+        solution_id:
+          type: string
+          format: uuid
+        rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+      required:
+      - rating
+      - solution_id
+    ReviewedSolutionContent:
+      type: object
+      properties:
+        review_id:
+          type: string
+          format: uuid
+        solution_id:
+          type: string
+          format: uuid
+        rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+        startup_id:
+          type: string
+          format: uuid
+        startup_name:
+          type: string
+        demand_id:
+          type: string
+          format: uuid
+        demand_title:
+          type: string
+      required:
+      - demand_id
+      - demand_title
+      - rating
+      - review_id
+      - solution_id
+      - startup_id
+      - startup_name
+    ReviewedSolutionFeed:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          $ref: '#/components/schemas/ReviewedSolutionFeedKindEnum'
+        published_at:
+          type: string
+          format: date-time
+        content:
+          $ref: '#/components/schemas/ReviewedSolutionContent'
+      required:
+      - content
+      - id
+      - kind
+      - published_at
+    ReviewedSolutionFeedKindEnum:
+      enum:
+      - REVIEWED_SOLUTION
+      type: string
+      description: '* `REVIEWED_SOLUTION` - REVIEWED_SOLUTION'
+    RoleEnum:
+      enum:
+      - CLIENT
+      - STARTUP
+      - INVESTOR
+      type: string
+      description: |-
+        * `CLIENT` - CLIENT
+        * `STARTUP` - STARTUP
+        * `INVESTOR` - INVESTOR
+    Solution:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        demand_id:
+          type: string
+          format: uuid
+        startup_id:
+          type: string
+          format: uuid
+        startup_name:
+          type: string
+        proposal:
+          type: string
+        delivery:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - created_at
+      - delivery
+      - demand_id
+      - id
+      - proposal
+      - startup_id
+      - startup_name
+      - status
+      - updated_at
+    SolutionCreateRequest:
+      type: object
+      properties:
+        demand_id:
+          type: string
+          format: uuid
+        proposal:
+          type: string
+          minLength: 1
+          maxLength: 10000
+      required:
+      - demand_id
+      - proposal
+    SolutionTransitionRequest:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        delivery:
+          type: string
+          minLength: 1
+          maxLength: 10000
+      required:
+      - status
+    StartupFeed:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          $ref: '#/components/schemas/StartupFeedKindEnum'
+        published_at:
+          type: string
+          format: date-time
+        content:
+          $ref: '#/components/schemas/PublicStartup'
+      required:
+      - content
+      - id
+      - kind
+      - published_at
+    StartupFeedKindEnum:
       enum:
       - STARTUP
-      - EMPRESA_CLIENTE
-      - INVESTIDOR
-      - ENTIDADE_FOMENTO
-      - ADMIN
       type: string
-      description: |-
-        * `STARTUP` - Startup
-        * `EMPRESA_CLIENTE` - Empresa Cliente
-        * `INVESTIDOR` - Investidor
-        * `ENTIDADE_FOMENTO` - Entidade de Fomento
-        * `ADMIN` - Administrador
-    PerfilEmpresaCliente:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          readOnly: true
-        usuario:
-          type: string
-          format: uuid
-          title: Usuário
-        razao_social:
-          type: string
-          title: Razão social
-          maxLength: 120
-        nome_fantasia:
-          type: string
-          maxLength: 100
-        cnpj:
-          type: string
-          maxLength: 18
-        segmento_operacional:
-          $ref: '#/components/schemas/SegmentoOperacionalEnum'
-        porte_empresa:
-          allOf:
-          - $ref: '#/components/schemas/PorteEmpresaEnum'
-          title: Porte da empresa
-        endereco_cidade_uf:
-          type: string
-          title: Cidade / UF
-          maxLength: 255
-        criado_em:
-          type: string
-          format: date-time
-          readOnly: true
-      required:
-      - cnpj
-      - criado_em
-      - endereco_cidade_uf
-      - id
-      - nome_fantasia
-      - porte_empresa
-      - razao_social
-      - segmento_operacional
-      - usuario
-    PerfilEmpresaClienteRequest:
-      type: object
-      properties:
-        usuario:
-          type: string
-          format: uuid
-          title: Usuário
-        razao_social:
-          type: string
-          minLength: 1
-          title: Razão social
-          maxLength: 120
-        nome_fantasia:
-          type: string
-          minLength: 1
-          maxLength: 100
-        cnpj:
-          type: string
-          minLength: 1
-          maxLength: 18
-        segmento_operacional:
-          $ref: '#/components/schemas/SegmentoOperacionalEnum'
-        porte_empresa:
-          allOf:
-          - $ref: '#/components/schemas/PorteEmpresaEnum'
-          title: Porte da empresa
-        endereco_cidade_uf:
-          type: string
-          minLength: 1
-          title: Cidade / UF
-          maxLength: 255
-      required:
-      - cnpj
-      - endereco_cidade_uf
-      - nome_fantasia
-      - porte_empresa
-      - razao_social
-      - segmento_operacional
-      - usuario
-    PerfilEntidadeFomento:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          readOnly: true
-        usuario:
-          type: string
-          format: uuid
-          title: Usuário
-        nome_instituicao:
-          type: string
-          title: Nome da instituição
-          maxLength: 120
-        cnpj:
-          type: string
-          maxLength: 18
-        tipo_entidade:
-          allOf:
-          - $ref: '#/components/schemas/TipoEntidadeEnum'
-          title: Tipo de entidade
-        site_institucional:
-          type: string
-          nullable: true
-          maxLength: 100
-        verificado_por_admin:
-          type: boolean
-          title: Verificado por administrador
-        criado_em:
-          type: string
-          format: date-time
-          readOnly: true
-      required:
-      - cnpj
-      - criado_em
-      - id
-      - nome_instituicao
-      - tipo_entidade
-      - usuario
-    PerfilEntidadeFomentoRequest:
-      type: object
-      properties:
-        usuario:
-          type: string
-          format: uuid
-          title: Usuário
-        nome_instituicao:
-          type: string
-          minLength: 1
-          title: Nome da instituição
-          maxLength: 120
-        cnpj:
-          type: string
-          minLength: 1
-          maxLength: 18
-        tipo_entidade:
-          allOf:
-          - $ref: '#/components/schemas/TipoEntidadeEnum'
-          title: Tipo de entidade
-        site_institucional:
-          type: string
-          nullable: true
-          maxLength: 100
-        verificado_por_admin:
-          type: boolean
-          title: Verificado por administrador
-      required:
-      - cnpj
-      - nome_instituicao
-      - tipo_entidade
-      - usuario
-    PerfilInvestidor:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          readOnly: true
-        usuario:
-          type: string
-          format: uuid
-          title: Usuário
-        instituicao_origem:
-          type: string
-          nullable: true
-          title: Instituição de origem
-          maxLength: 120
-        cargo_funcao:
-          type: string
-          nullable: true
-          title: Cargo / função
-          maxLength: 80
-        tipo_investidor:
-          allOf:
-          - $ref: '#/components/schemas/TipoInvestidorEnum'
-          title: Tipo de investidor
-        teses_interesse:
-          title: Teses de interesse
-        ticket_medio_min:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
-          nullable: true
-          title: Ticket médio mínimo
-        ticket_medio_max:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
-          nullable: true
-          title: Ticket médio máximo
-        confidencialidade_ativa:
-          type: boolean
-        criado_em:
-          type: string
-          format: date-time
-          readOnly: true
-      required:
-      - criado_em
-      - id
-      - tipo_investidor
-      - usuario
-    PerfilInvestidorRequest:
-      type: object
-      properties:
-        usuario:
-          type: string
-          format: uuid
-          title: Usuário
-        instituicao_origem:
-          type: string
-          nullable: true
-          title: Instituição de origem
-          maxLength: 120
-        cargo_funcao:
-          type: string
-          nullable: true
-          title: Cargo / função
-          maxLength: 80
-        tipo_investidor:
-          allOf:
-          - $ref: '#/components/schemas/TipoInvestidorEnum'
-          title: Tipo de investidor
-        teses_interesse:
-          title: Teses de interesse
-        ticket_medio_min:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
-          nullable: true
-          title: Ticket médio mínimo
-        ticket_medio_max:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
-          nullable: true
-          title: Ticket médio máximo
-        confidencialidade_ativa:
-          type: boolean
-      required:
-      - tipo_investidor
-      - usuario
-    PerfilStartup:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          readOnly: true
-        usuario:
-          type: string
-          format: uuid
-          title: Usuário
-        nome_startup:
-          type: string
-          title: Nome da startup
-          maxLength: 100
-        cnpj:
-          type: string
-          nullable: true
-          maxLength: 18
-        website:
-          type: string
-          nullable: true
-          maxLength: 100
-        setor_mercado:
-          allOf:
-          - $ref: '#/components/schemas/SetorMercadoEnum'
-          title: Setor de mercado
-        estagio_desenvolvimento:
-          allOf:
-          - $ref: '#/components/schemas/EstagioDesenvolvimentoEnum'
-          title: Estágio de desenvolvimento
-        pitch_resumido:
-          type: string
-          maxLength: 300
-        pontuacao_reputacao:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,2}(?:\.\d{0,2})?$
-          title: Pontuação de reputação
-        total_testes_concluidos:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          title: Total de testes concluídos
-        criado_em:
-          type: string
-          format: date-time
-          readOnly: true
-      required:
-      - criado_em
-      - estagio_desenvolvimento
-      - id
-      - nome_startup
-      - pitch_resumido
-      - setor_mercado
-      - usuario
-    PerfilStartupRequest:
-      type: object
-      properties:
-        usuario:
-          type: string
-          format: uuid
-          title: Usuário
-        nome_startup:
-          type: string
-          minLength: 1
-          title: Nome da startup
-          maxLength: 100
-        cnpj:
-          type: string
-          nullable: true
-          maxLength: 18
-        website:
-          type: string
-          nullable: true
-          maxLength: 100
-        setor_mercado:
-          allOf:
-          - $ref: '#/components/schemas/SetorMercadoEnum'
-          title: Setor de mercado
-        estagio_desenvolvimento:
-          allOf:
-          - $ref: '#/components/schemas/EstagioDesenvolvimentoEnum'
-          title: Estágio de desenvolvimento
-        pitch_resumido:
-          type: string
-          minLength: 1
-          maxLength: 300
-        pontuacao_reputacao:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,2}(?:\.\d{0,2})?$
-          title: Pontuação de reputação
-        total_testes_concluidos:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          title: Total de testes concluídos
-      required:
-      - estagio_desenvolvimento
-      - nome_startup
-      - pitch_resumido
-      - setor_mercado
-      - usuario
-    PorteEmpresaEnum:
+      description: '* `STARTUP` - STARTUP'
+    StatusEnum:
       enum:
-      - MEI
-      - ME
-      - EPP
-      - MEDIO_PORTE
+      - ACCEPTED
+      - REJECTED
+      - WITHDRAWN
+      - IN_PROGRESS
+      - DELIVERED
       type: string
       description: |-
-        * `MEI` - MEI
-        * `ME` - Microempresa
-        * `EPP` - Empresa de Pequeno Porte
-        * `MEDIO_PORTE` - Médio Porte
-    SegmentoOperacionalEnum:
-      enum:
-      - OFICINA_MECANICA
-      - MERCADO_VAREJO
-      - DISTRIBUIDORA
-      - RESTAURANTE
-      - CLINICA
-      - LOGISTICA_LOCAL
-      - OUTROS
-      type: string
-      description: |-
-        * `OFICINA_MECANICA` - Oficina Mecânica
-        * `MERCADO_VAREJO` - Mercado / Varejo
-        * `DISTRIBUIDORA` - Distribuidora
-        * `RESTAURANTE` - Restaurante
-        * `CLINICA` - Clínica
-        * `LOGISTICA_LOCAL` - Logística Local
-        * `OUTROS` - Outros
-    SetorMercadoEnum:
-      enum:
-      - LOGISTICA
-      - FINANCAS
-      - VAREJO
-      - SAUDE
-      - AGRO
-      - EDUCACAO
-      - SERVICOS
-      - OUTROS
-      type: string
-      description: |-
-        * `LOGISTICA` - Logística
-        * `FINANCAS` - Finanças
-        * `VAREJO` - Varejo
-        * `SAUDE` - Saúde
-        * `AGRO` - Agro
-        * `EDUCACAO` - Educação
-        * `SERVICOS` - Serviços
-        * `OUTROS` - Outros
-    TipoEntidadeEnum:
-      enum:
-      - GRANDE_EMPRESA
-      - HUB_INOVACAO
-      - ACELERADORA
-      - ORGAO_GOVERNO
-      - ASSOCIACAO_SETORIAL
-      type: string
-      description: |-
-        * `GRANDE_EMPRESA` - Grande Empresa
-        * `HUB_INOVACAO` - Hub de Inovação
-        * `ACELERADORA` - Aceleradora
-        * `ORGAO_GOVERNO` - Órgão de Governo
-        * `ASSOCIACAO_SETORIAL` - Associação Setorial
-    TipoInvestidorEnum:
-      enum:
-      - ANJO
-      - PRE_SEED
-      - SEED
-      - VENTURE_CAPITAL
-      - CORPORATE_VC
-      type: string
-      description: |-
-        * `ANJO` - Investidor Anjo
-        * `PRE_SEED` - Pré-Seed
-        * `SEED` - Seed
-        * `VENTURE_CAPITAL` - Venture Capital
-        * `CORPORATE_VC` - Corporate VC
-    Usuario:
+        * `ACCEPTED` - ACCEPTED
+        * `REJECTED` - REJECTED
+        * `WITHDRAWN` - WITHDRAWN
+        * `IN_PROGRESS` - IN_PROGRESS
+        * `DELIVERED` - DELIVERED
+    StatusEvent:
       type: object
-      description: |-
-        Serializer do USUARIO. A senha nunca é lida de volta (write_only) e é
-        sempre gravada via `set_password`, garantindo o hash Argon2id.
       properties:
-        id:
+        previous_status:
           type: string
-          format: uuid
-          readOnly: true
-        email:
+        new_status:
           type: string
-          format: email
-          title: E-mail
-          maxLength: 255
-        nome_civil:
-          type: string
-          maxLength: 150
-        telefone:
-          type: string
-          nullable: true
-          maxLength: 30
-        perfil_ativo:
-          $ref: '#/components/schemas/PerfilAtivoEnum'
-        termo_privacidade_aceito:
-          type: boolean
-          title: Termo de privacidade aceito
-        data_aceite_termos:
+        created_at:
           type: string
           format: date-time
-          readOnly: true
-          title: Data de aceite dos termos
-        ativo:
-          type: boolean
-        criado_em:
-          type: string
-          format: date-time
-          readOnly: true
-        atualizado_em:
-          type: string
-          format: date-time
-          readOnly: true
       required:
-      - atualizado_em
-      - criado_em
-      - data_aceite_termos
-      - email
-      - id
-      - nome_civil
-      - perfil_ativo
-    UsuarioRequest:
-      type: object
+      - created_at
+      - new_status
+      - previous_status
+    VisibilityEnum:
+      enum:
+      - PUBLIC
+      - PRIVATE
+      type: string
       description: |-
-        Serializer do USUARIO. A senha nunca é lida de volta (write_only) e é
-        sempre gravada via `set_password`, garantindo o hash Argon2id.
-      properties:
-        email:
-          type: string
-          format: email
-          minLength: 1
-          title: E-mail
-          maxLength: 255
-        password:
-          type: string
-          writeOnly: true
-          minLength: 8
-        nome_civil:
-          type: string
-          minLength: 1
-          maxLength: 150
-        telefone:
-          type: string
-          nullable: true
-          maxLength: 30
-        perfil_ativo:
-          $ref: '#/components/schemas/PerfilAtivoEnum'
-        termo_privacidade_aceito:
-          type: boolean
-          title: Termo de privacidade aceito
-        ativo:
-          type: boolean
-      required:
-      - email
-      - nome_civil
-      - password
-      - perfil_ativo
+        * `PUBLIC` - PUBLIC
+        * `PRIVATE` - PRIVATE
   securitySchemes:
-    basicAuth:
-      type: http
-      scheme: basic
     cookieAuth:
       type: apiKey
       in: cookie
