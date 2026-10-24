@@ -3,6 +3,7 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
@@ -33,6 +34,7 @@ class DemandViewSet(
     lookup_value_converter = "uuid"
     permission_classes = [ClientWritePermission]
     serializer_class = DemandSerializer
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
     lookup_field = "id"
     lookup_url_kwarg = "pk"
 

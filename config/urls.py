@@ -13,6 +13,7 @@ from starup_backend.accounts.views import (
     RegistrationView,
 )
 from starup_backend.common.pwa import pwa_file
+from starup_backend.demands.media import DemandImageView
 from starup_backend.demands.views import CategoryViewSet, DemandViewSet
 from starup_backend.feed.views import FeedView
 from starup_backend.matchmaking_views import (
@@ -61,6 +62,11 @@ urlpatterns = [
     path("api/v1/auth/logout/", LogoutView.as_view(), name="logout"),
     path("api/v1/me/", MeView.as_view(), name="me"),
     path("api/v1/feed/", FeedView.as_view(), name="feed"),
+    path(
+        "api/v1/demand-images/<uuid:image_id>/",
+        DemandImageView.as_view(),
+        name="demand-image",
+    ),
     path("api/v1/reviews/", ReviewCreateView.as_view(), name="review-create"),
     path("api/v1/push/config/", PushConfigView.as_view(), name="push-config"),
     path(

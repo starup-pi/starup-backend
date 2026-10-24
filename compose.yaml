@@ -28,8 +28,10 @@ services:
       POSTGRES_HOST: db
       REDIS_URL: redis://redis:6379/0
       PWA_ROOT: /app/pwa
+      MEDIA_ROOT: /app/media
     volumes:
       - ../starup-frontend:/app/pwa:ro
+      - media_data:/app/media
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
@@ -39,4 +41,5 @@ services:
         condition: service_healthy
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 volumes:
+  media_data:
   postgres_data:

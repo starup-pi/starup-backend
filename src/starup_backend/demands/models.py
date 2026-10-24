@@ -27,6 +27,7 @@ class Demand(UUIDModel):
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
     title = models.CharField(max_length=160)
     description = models.TextField(max_length=10000)
+    tags = models.JSONField(default=list, blank=True)
     status = models.CharField(
         max_length=16, choices=Status.choices, default=Status.OPEN
     )
@@ -64,3 +65,13 @@ class Demand(UUIDModel):
                 name="demand_completion_date",
             ),
         ]
+
+
+class DemandImage(UUIDModel):
+    demand = models.ForeignKey(Demand, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to="demand-images/%Y/%m/", max_length=200)
+    content_type = models.CharField(max_length=20)
+    ordering = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["ordering", "created_at", "id"]
