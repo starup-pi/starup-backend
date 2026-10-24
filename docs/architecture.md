@@ -56,6 +56,83 @@ position é BigAutoField interno, usado pela paginação CursorPagination; id p�
 
 Selectors consultam projeções values() com campos enumerados. Hidratação do feed usa uma consulta por tipo presente na página, nunca por post. Conteúdo privado não entra no feed. Média e contagem consideram avaliações válidas da startup; avaliações de trabalhos privados contribuem somente como agregados, sem expor demanda ou autor.
 
+## Matchmaking do MVP
+
+Os três endpoints em `/api/v1/matchmaking/` usam o schema existente, sem tabelas
+ou migrações novas. O setor público da startup (`StartupProfile.category`, até
+40 caracteres) pode ser informado no cadastro ou editado pelo proprietário, e
+retorna no perfil privado de `/me/`. A interface usa os slugs de `/categories/`;
+o comparador também aceita nomes legados equivalentes, ignorando caixa e acentos,
+sem considerar substrings como setores iguais.
+
+- `demands/{uuid}/`: ordena startups ativas; a demanda segue o mesmo escopo de
+  visibilidade da API de demandas. Recursos ausentes/inacessíveis retornam 404.
+- `recommended-demands/`: somente startups autenticadas e ativas. Retorna demandas
+  públicas abertas de clientes ativos, sem demandas com uma proposta anterior da
+  mesma startup, inclusive retirada ou rejeitada.
+- `traction-showcase/`: diretório público ordenado de startups ativas, incluindo
+  startups sem avaliações. `min_score` opcional filtra a pontuação (padrão 0;
+  número finito entre 0 e 100). Não é uma certificação de investimento.
+
+A pontuação é uma heurística de 0 a 100: 25% compatibilidade setorial, 35% média das
+avaliações de entregas concluídas, 25% estimativa de impacto por quantidade de
+entregas concluídas e 15% maturidade pelo histórico dessas entregas. Sem notas,
+a qualidade começa em 0,5 e o impacto estimado em 0,4. Na vitrine geral, o fator
+setorial é fixado em 1 porque não há uma demanda alvo; nas recomendações, o
+histórico é o da própria startup. A ordenação tem desempate determinístico.
+
+O selo significa pelo menos uma entrega concluída e média de avaliação >= 4.
+Não representa auditoria independente nem economia financeira medida; esses dados
+não existem no MVP. Os identificadores históricos da fórmula (`m_auditoria` e
+`e_economia`) são mantidos no contrato da API por compatibilidade. A interface
+explica a estimativa e usa o texto “Entrega bem avaliada”. Somente resultados
+confirmados contribuem para as médias e contagens do matchmaking. Propostas,
+entregas, identidades e autores não são incluídos nas respostas.
+
+## Vitrine, publicação e perfis públicos
+
+A vitrine é um feed em uma coluna, com autor público, data, status, texto,
+imagens, tags, links de perfil e notas reais de entregas. Os parâmetros `kind`
+e `tag` são filtrados antes da paginação por cursor; a busca textual da interface
+considera os conteúdos carregados. Tutoriais e explicações do fluxo ficam na
+visão geral. A publicação e edição têm página própria em `#publicar-demanda`.
+
+`Demand.tags` guarda até 8 tags canônicas de até 30 caracteres. `DemandImage`
+relaciona até 4 imagens por demanda, com ordem, tipo verificado e arquivo no
+storage do Django. A migração `demands.0003_demand_tags_images` é aditiva.
+Arquivos não são guardados no Git. `MEDIA_ROOT` configura o storage local; o
+Compose mantém um volume de mídia persistente. Backups devem incluir banco e
+mídia. Novos deployments devem instalar o lock atualizado (inclui Pillow) e
+executar `manage.py migrate` antes de servir a versão nova.
+
+Criação e edição aceitam multipart, com `images` repetido, `tags` como lista JSON
+ou campos repetidos e, na edição, `keep_image_ids` para reter imagens existentes.
+JSON continua disponível para demandas sem uploads. Cada imagem é limitada a
+5 MB e 20 megapixels; JPEG, PNG, WebP e GIF são decodificados e regravados como
+JPEG/PNG estático, removendo metadados e limitando a resolução a 2560 pixels.
+A interface permite JPEG, PNG e WebP. IDs de imagens de outra demanda são
+rejeitados. Escritas com novos arquivos exigem a transação externa, para que
+falhas de gravação/commit possam compensar os arquivos escritos. Remoções de
+arquivos só ocorrem depois do commit; exclusão de conta também limpa imagens e
+tags das demandas do cliente.
+
+Imagens são servidas exclusivamente por `/api/v1/demand-images/{uuid}/`, seguindo
+a visibilidade da demanda e com `private, no-store` e `nosniff`. Não existe
+exposição de diretório MEDIA_URL. Ocultar uma demanda revoga a imagem para quem
+não participa; arquivos e perfis completos não entram no cache offline da PWA.
+Rascunhos e prévias de imagens existem somente na memória da aba e são limpos no
+logout. O shell v10 distribui as novas páginas pelo mecanismo explícito de atualização.
+
+Clientes e startups possuem perfis públicos e históricos paginados em
+`/clients/{uuid}/demands/` e `/startups/{uuid}/demands/` (prefixo `/api/v1/`).
+O perfil de cliente expõe apenas o nome de exibição, UUID do perfil e estatísticas
+de demandas públicas. Seus documentos, e-mail, nome civil e ID de autenticação
+continuam privados. A nota no perfil de cliente corresponde às entregas que ele
+avaliou; não é uma avaliação do próprio cliente. No perfil da startup, o histórico
+mostra apenas demandas públicas em que ela foi selecionada, em andamento ou
+concluídas. Propostas pendentes, rejeitadas e retiradas não são públicas. O filtro
+`status` e a paginação não expandem o escopo de visibilidade.
+
 ## Privacidade do investidor
 
 Alias aleatório de 96 bits é privado e não deriva de nome, documento, e-mail ou ID de autenticação. Não há diretório de investidores, telemetria de visitantes, favoritos públicos, filtros por identidade, presença ou revelação voluntária.
@@ -97,7 +174,7 @@ Tabelas legadas ficam fora das rotas e do admin; servem à transição e exigem 
 - Verificação de e-mail, recuperação de senha, MFA de operadores e moderação de conteúdo são próximos requisitos antes de lançamento público.
 - Avaliações exigem vínculo e entrega válida, mas isso não impede contas combinadas ou trabalhos fictícios. Moderação e mecanismos de contestação são necessários conforme o uso real.
 - Documento não é criptografado pela aplicação neste incremento; usar criptografia de disco/banco/backups, acesso mínimo e avaliar cifragem de campo com gestão de chaves.
-- Sem pagamentos, chat, anexos, auditorias, editais, eventos, convites privados ou equipes.
+- Sem pagamentos, chat, anexos de documentos, auditorias, editais, eventos, convites privados ou equipes. Imagens de referência de demandas são suportadas.
 - Alterações de proposta e conclusão sem nota não são suportadas no MVP; uma entrega aguardando avaliação fica DELIVERED.
 - Exclusão durante trabalho em andamento pode exigir encerramento operacional manual do contrato; não há contrato financeiro neste incremento.
 - Consentimentos e outbox têm retenção operacional ainda a definir; rotina de limpeza é necessária.

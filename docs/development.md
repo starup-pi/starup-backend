@@ -74,3 +74,23 @@ A renomeação foi verificada com os mesmos 151 testes de backend e 9 testes do 
 - Migrações foram executadas somente no banco temporário de verificação. Nenhum banco existente foi atualizado nesta validação.
 - Docker/Compose estão configurados com PostgreSQL 17, mas não foram executados: a máquina não possui runtime de contêiner. Compatibilidade do ambiente completo deve ser verificada onde Docker estiver disponível.
 - Transporte Web Push foi testado com simulações; nenhuma notificação real foi enviada e não foram criados segredos VAPID.
+
+## Revisão do matchmaking em 2026-10-24
+
+Consulte [o relatório de integração e validação](matchmaking-validation.md) para
+os defeitos corrigidos, escopo do banco temporário, 203 testes de backend e
+21 testes de frontend. O matchmaking reutiliza o schema atual; não exige uma
+nova migração de modelo. Novas instalações continuam exigindo `manage.py migrate`.
+
+## Feed e perfis públicos — 2026-10-24
+
+A versão nova exige instalar as dependências atualizadas (Pillow) e aplicar
+`demands.0003_demand_tags_images` com `manage.py migrate`. A mídia fica no
+diretório `media/` por padrão ou no caminho definido por `MEDIA_ROOT`. Inclua
+esse storage nos backups; o Compose usa o volume persistente `media_data`.
+
+Validação: 255 testes de backend em PostgreSQL e 30 testes de frontend; uploads
+com CSRF, limites, isolamento de imagens privadas, rollback, exclusão, perfis
+públicos, histórico, filtros, paginação e matchmaking incluídos. A publicação
+com imagem/tags e os perfis de cliente/startup foram verificados no navegador.
+O banco local foi respaldado antes da migração; nenhum banco de produção foi alterado.
