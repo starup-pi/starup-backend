@@ -18,6 +18,7 @@ dependencies = [
     "cryptography>=46,<51",
     "requests>=2.32,<3",
     "gunicorn>=23,<24",
+    "pillow>=13,<14",
 ]
 
 [project.optional-dependencies]

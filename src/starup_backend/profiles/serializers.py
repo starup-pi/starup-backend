@@ -13,6 +13,24 @@ class PublicStartupSerializer(serializers.Serializer):
     category = serializers.CharField()
     average_rating = serializers.FloatField(allow_null=True)
     review_count = serializers.IntegerField()
+    completed_count = serializers.IntegerField()
+    in_progress_count = serializers.IntegerField()
+
+
+class PublicClientSerializer(serializers.Serializer):
+    id = serializers.UUIDField()
+    display_name = serializers.CharField()
+    open_count = serializers.IntegerField()
+    completed_count = serializers.IntegerField()
+    average_rating = serializers.FloatField(allow_null=True)
+    review_count = serializers.IntegerField()
+
+
+class PublicHistoryQuerySerializer(StrictSerializer):
+    status = serializers.ChoiceField(
+        choices=["OPEN", "IN_PROGRESS", "COMPLETED", "CANCELLED"], required=False
+    )
+    page = serializers.IntegerField(min_value=1, required=False)
 
 
 class StartupUpdateSerializer(StrictSerializer):
@@ -21,3 +39,4 @@ class StartupUpdateSerializer(StrictSerializer):
         max_length=300, required=False, allow_blank=True
     )
     website = serializers.URLField(required=False, allow_blank=True)
+    category = serializers.CharField(max_length=40, required=False, allow_blank=True)

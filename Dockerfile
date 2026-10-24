@@ -6,7 +6,7 @@ COPY src ./src
 COPY requirements.lock ./
 RUN pip install --no-cache-dir -c requirements.lock .
 COPY . .
-RUN useradd --create-home --uid 10001 appuser && chown -R appuser:appuser /app
+RUN mkdir -p /app/media && useradd --create-home --uid 10001 appuser && chown -R appuser:appuser /app
 USER appuser
 EXPOSE 8000
 CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2", "--access-logfile", "-"]

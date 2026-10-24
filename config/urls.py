@@ -13,14 +13,24 @@ from starup_backend.accounts.views import (
     RegistrationView,
 )
 from starup_backend.common.pwa import pwa_file
+from starup_backend.demands.media import DemandImageView
 from starup_backend.demands.views import CategoryViewSet, DemandViewSet
 from starup_backend.feed.views import FeedView
+from starup_backend.matchmaking_views import (
+    DemandMatchmakingView,
+    InvestorTractionVitrineView,
+    StartupRecommendationsView,
+)
 from starup_backend.notifications.views import (
     PushConfigView,
     PushSubscriptionDetailView,
     PushSubscriptionView,
 )
-from starup_backend.profiles.views import OwnStartupViewSet, StartupViewSet
+from starup_backend.profiles.views import (
+    ClientViewSet,
+    OwnStartupViewSet,
+    StartupViewSet,
+)
 from starup_backend.reviews.views import ReviewCreateView
 from starup_backend.solutions.views import SolutionViewSet
 
@@ -31,6 +41,7 @@ router.register("categories", CategoryViewSet, basename="category")
 router.register("demands", DemandViewSet, basename="demand")
 router.register("solutions", SolutionViewSet, basename="solution")
 router.register("startups", StartupViewSet, basename="startup")
+router.register("clients", ClientViewSet, basename="client")
 router.register("my-startups", OwnStartupViewSet, basename="own-startup")
 
 urlpatterns = [
@@ -56,6 +67,11 @@ urlpatterns = [
     path("api/v1/auth/logout/", LogoutView.as_view(), name="logout"),
     path("api/v1/me/", MeView.as_view(), name="me"),
     path("api/v1/feed/", FeedView.as_view(), name="feed"),
+    path(
+        "api/v1/demand-images/<uuid:image_id>/",
+        DemandImageView.as_view(),
+        name="demand-image",
+    ),
     path("api/v1/reviews/", ReviewCreateView.as_view(), name="review-create"),
     path("api/v1/push/config/", PushConfigView.as_view(), name="push-config"),
     path(
@@ -73,6 +89,21 @@ urlpatterns = [
         "api/v1/docs/",
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
+    ),
+    path(
+        "api/v1/matchmaking/demands/<uuid:demand_id>/",
+        DemandMatchmakingView.as_view(),
+        name="matchmaking-demand",
+    ),
+    path(
+        "api/v1/matchmaking/recommended-demands/",
+        StartupRecommendationsView.as_view(),
+        name="matchmaking-recommendations",
+    ),
+    path(
+        "api/v1/matchmaking/traction-showcase/",
+        InvestorTractionVitrineView.as_view(),
+        name="matchmaking-traction-showcase",
     ),
     path("api/v1/", include(router.urls)),
 ]

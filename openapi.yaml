@@ -101,6 +101,95 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedCategoryList'
           description: ''
+  /api/v1/clients/{id}/:
+    get:
+      operationId: clients_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - clients
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicClient'
+          description: ''
+  /api/v1/clients/{id}/demands/:
+    get:
+      operationId: clients_demands_list
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+      - in: query
+        name: status
+        schema:
+          enum:
+          - OPEN
+          - IN_PROGRESS
+          - COMPLETED
+          - CANCELLED
+          type: string
+          minLength: 1
+        description: |-
+          * `OPEN` - OPEN
+          * `IN_PROGRESS` - IN_PROGRESS
+          * `COMPLETED` - COMPLETED
+          * `CANCELLED` - CANCELLED
+      tags:
+      - clients
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDemandList'
+          description: ''
+  /api/v1/demand-images/{image_id}/:
+    get:
+      operationId: demand_images_retrieve
+      parameters:
+      - in: path
+        name: image_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - demand-images
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+          description: ''
   /api/v1/demands/:
     get:
       operationId: demands_list
@@ -161,10 +250,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/DemandWriteRequest'
-          application/x-www-form-urlencoded:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/DemandWriteRequest'
-          multipart/form-data:
+          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/DemandWriteRequest'
         required: true
@@ -214,10 +303,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchedDemandWriteRequest'
-          application/x-www-form-urlencoded:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/PatchedDemandWriteRequest'
-          multipart/form-data:
+          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/PatchedDemandWriteRequest'
       security:
@@ -254,12 +343,34 @@ paths:
     get:
       operationId: feed_list
       parameters:
-      - name: cursor
-        required: false
-        in: query
-        description: O valor do cursor de paginação.
+      - in: query
+        name: cursor
         schema:
           type: string
+          minLength: 1
+          maxLength: 1024
+      - in: query
+        name: kind
+        schema:
+          enum:
+          - ALL
+          - DEMAND
+          - REVIEWED_SOLUTION
+          - STARTUP
+          type: string
+          default: ALL
+          minLength: 1
+        description: |-
+          * `ALL` - ALL
+          * `DEMAND` - DEMAND
+          * `REVIEWED_SOLUTION` - REVIEWED_SOLUTION
+          * `STARTUP` - STARTUP
+      - in: query
+        name: tag
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 30
       tags:
       - feed
       security:
@@ -270,6 +381,76 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginatedFeedPostList'
+          description: ''
+  /api/v1/matchmaking/demands/{demand_id}/:
+    get:
+      operationId: matchmaking_demands_list
+      description: Returns ranked startup matches for a specific demand.
+      parameters:
+      - in: path
+        name: demand_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - matchmaking
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DemandMatchResult'
+          description: ''
+  /api/v1/matchmaking/recommended-demands/:
+    get:
+      operationId: matchmaking_recommended_demands_list
+      description: Returns open demands ranked by sector match for the authenticated
+        startup.
+      tags:
+      - matchmaking
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecommendedDemandResult'
+          description: ''
+  /api/v1/matchmaking/traction-showcase/:
+    get:
+      operationId: matchmaking_traction_showcase_list
+      description: Returns active startups ranked by client-reviewed delivery history.
+      parameters:
+      - in: query
+        name: min_score
+        schema:
+          type: number
+          format: double
+          maximum: 100.0
+          minimum: 0.0
+          default: 0.0
+      tags:
+      - matchmaking
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DemandMatchResult'
           description: ''
   /api/v1/me/:
     get:
@@ -574,8 +755,57 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicStartup'
           description: ''
+  /api/v1/startups/{id}/demands/:
+    get:
+      operationId: startups_demands_list
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+      - in: query
+        name: status
+        schema:
+          enum:
+          - OPEN
+          - IN_PROGRESS
+          - COMPLETED
+          - CANCELLED
+          type: string
+          minLength: 1
+        description: |-
+          * `OPEN` - OPEN
+          * `IN_PROGRESS` - IN_PROGRESS
+          * `COMPLETED` - COMPLETED
+          * `CANCELLED` - CANCELLED
+      tags:
+      - startups
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDemandList'
+          description: ''
 components:
   schemas:
+    AuthorTypeEnum:
+      enum:
+      - CLIENT
+      - STARTUP
+      type: string
+      description: |-
+        * `CLIENT` - CLIENT
+        * `STARTUP` - STARTUP
     Category:
       type: object
       properties:
@@ -613,6 +843,29 @@ components:
           type: string
         description:
           type: string
+        tags:
+          type: array
+          items:
+            type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/DemandImage'
+        client_id:
+          type: string
+          format: uuid
+        client_name:
+          type: string
+        rating:
+          type: integer
+          nullable: true
+        selected_startup_id:
+          type: string
+          format: uuid
+          nullable: true
+        selected_startup_name:
+          type: string
+          nullable: true
         category_id:
           type: string
           format: uuid
@@ -635,11 +888,18 @@ components:
       required:
       - category_id
       - category_name
+      - client_id
+      - client_name
       - completed_at
       - created_at
       - description
       - id
+      - images
+      - rating
+      - selected_startup_id
+      - selected_startup_name
       - status
+      - tags
       - title
       - updated_at
       - visibility
@@ -654,9 +914,19 @@ components:
         published_at:
           type: string
           format: date-time
+        author_type:
+          $ref: '#/components/schemas/AuthorTypeEnum'
+        author_id:
+          type: string
+          format: uuid
+        author_name:
+          type: string
         content:
           $ref: '#/components/schemas/Demand'
       required:
+      - author_id
+      - author_name
+      - author_type
       - content
       - id
       - kind
@@ -666,6 +936,58 @@ components:
       - DEMAND
       type: string
       description: '* `DEMAND` - DEMAND'
+    DemandImage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
+      required:
+      - id
+      - url
+    DemandMatchResult:
+      type: object
+      properties:
+        startup_id:
+          type: string
+          format: uuid
+        startup_name:
+          type: string
+        startup_description:
+          type: string
+        startup_website:
+          type: string
+        startup_category:
+          type: string
+        average_rating:
+          type: number
+          format: double
+          nullable: true
+        review_count:
+          type: integer
+        completed_tests:
+          type: integer
+        has_seal:
+          type: boolean
+        score:
+          type: number
+          format: double
+        details:
+          $ref: '#/components/schemas/MatchmakingDetails'
+      required:
+      - average_rating
+      - completed_tests
+      - details
+      - has_seal
+      - review_count
+      - score
+      - startup_category
+      - startup_description
+      - startup_id
+      - startup_name
+      - startup_website
     DemandWriteRequest:
       type: object
       properties:
@@ -684,6 +1006,27 @@ components:
           allOf:
           - $ref: '#/components/schemas/VisibilityEnum'
           default: PUBLIC
+        tags:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 31
+          maxItems: 8
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+          writeOnly: true
+          maxItems: 4
+        keep_image_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          writeOnly: true
+          maxItems: 4
       required:
       - category_id
       - description
@@ -714,6 +1057,33 @@ components:
       required:
       - email
       - password
+    MatchmakingDetails:
+      type: object
+      properties:
+        score:
+          type: number
+          format: double
+        has_seal:
+          type: boolean
+        c_setor:
+          type: number
+          format: double
+        m_auditoria:
+          type: number
+          format: double
+        e_economia:
+          type: number
+          format: double
+        t_maturidade:
+          type: number
+          format: double
+      required:
+      - c_setor
+      - e_economia
+      - has_seal
+      - m_auditoria
+      - score
+      - t_maturidade
     Message:
       type: object
       properties:
@@ -873,6 +1243,27 @@ components:
           allOf:
           - $ref: '#/components/schemas/VisibilityEnum'
           default: PUBLIC
+        tags:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 31
+          maxItems: 8
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+          writeOnly: true
+          maxItems: 4
+        keep_image_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          writeOnly: true
+          maxItems: 4
     PatchedStartupUpdateRequest:
       type: object
       properties:
@@ -886,6 +1277,9 @@ components:
         website:
           type: string
           format: uri
+        category:
+          type: string
+          maxLength: 40
     PersonTypeEnum:
       enum:
       - PF
@@ -916,6 +1310,31 @@ components:
       - legal_name
       - profile
       - role
+    PublicClient:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        display_name:
+          type: string
+        open_count:
+          type: integer
+        completed_count:
+          type: integer
+        average_rating:
+          type: number
+          format: double
+          nullable: true
+        review_count:
+          type: integer
+      required:
+      - average_rating
+      - completed_count
+      - display_name
+      - id
+      - open_count
+      - review_count
     PublicStartup:
       type: object
       properties:
@@ -936,11 +1355,17 @@ components:
           nullable: true
         review_count:
           type: integer
+        completed_count:
+          type: integer
+        in_progress_count:
+          type: integer
       required:
       - average_rating
       - category
+      - completed_count
       - description
       - id
+      - in_progress_count
       - name
       - review_count
       - website
@@ -989,6 +1414,44 @@ components:
           format: uuid
       required:
       - id
+    RecommendedDemandResult:
+      type: object
+      properties:
+        demand_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        category_id:
+          type: string
+          format: uuid
+        category_name:
+          type: string
+        category_slug:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        score:
+          type: number
+          format: double
+        has_seal:
+          type: boolean
+        details:
+          $ref: '#/components/schemas/MatchmakingDetails'
+      required:
+      - category_id
+      - category_name
+      - category_slug
+      - created_at
+      - demand_id
+      - description
+      - details
+      - has_seal
+      - score
+      - title
     RegistrationRequest:
       type: object
       properties:
@@ -1031,6 +1494,9 @@ components:
         website:
           type: string
           format: uri
+        category:
+          type: string
+          maxLength: 40
       required:
       - email
       - password
@@ -1091,14 +1557,37 @@ components:
           format: uuid
         demand_title:
           type: string
+        client_id:
+          type: string
+          format: uuid
+        client_name:
+          type: string
+        demand_description:
+          type: string
+        category_name:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/DemandImage'
       required:
+      - category_name
+      - client_id
+      - client_name
+      - demand_description
       - demand_id
       - demand_title
+      - images
       - rating
       - review_id
       - solution_id
       - startup_id
       - startup_name
+      - tags
     ReviewedSolutionFeed:
       type: object
       properties:
@@ -1110,9 +1599,19 @@ components:
         published_at:
           type: string
           format: date-time
+        author_type:
+          $ref: '#/components/schemas/AuthorTypeEnum'
+        author_id:
+          type: string
+          format: uuid
+        author_name:
+          type: string
         content:
           $ref: '#/components/schemas/ReviewedSolutionContent'
       required:
+      - author_id
+      - author_name
+      - author_type
       - content
       - id
       - kind
@@ -1203,9 +1702,19 @@ components:
         published_at:
           type: string
           format: date-time
+        author_type:
+          $ref: '#/components/schemas/AuthorTypeEnum'
+        author_id:
+          type: string
+          format: uuid
+        author_name:
+          type: string
         content:
           $ref: '#/components/schemas/PublicStartup'
       required:
+      - author_id
+      - author_name
+      - author_type
       - content
       - id
       - kind

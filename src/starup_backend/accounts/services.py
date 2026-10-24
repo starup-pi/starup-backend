@@ -61,6 +61,7 @@ def register_account(*, data: dict[str, Any]) -> None:
                     name=data["startup_name"],
                     description=data.get("description", ""),
                     website=data.get("website", ""),
+                    category=data.get("category", ""),
                 )
                 FeedPost.objects.create(kind=FeedPost.Kind.STARTUP, startup=profile)
             else:

@@ -5,7 +5,8 @@ from django.db import transaction
 from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied
 
-from starup_backend.demands.models import Demand
+from starup_backend.demands.media import remove_images
+from starup_backend.demands.models import Demand, DemandImage
 from starup_backend.profiles.models import (
     ClientProfile,
     InvestorProfile,
@@ -26,11 +27,15 @@ def erase_account(*, actor) -> None:
     if user.is_staff or user.is_superuser:
         raise PermissionDenied()
     demands = list(Demand.objects.select_for_update().filter(client__user_id=user.pk))
+    remove_images(DemandImage.objects.filter(demand_id__in=[d.id for d in demands]))
     for demand in demands:
         demand.visibility = Demand.Visibility.PRIVATE
         demand.title = "Conteúdo removido"
         demand.description = ""
-        demand.save(update_fields=["visibility", "title", "description", "updated_at"])
+        demand.tags = []
+        demand.save(
+            update_fields=["visibility", "title", "description", "tags", "updated_at"]
+        )
     # Proposal/delivery text may contain identifiers, including details about clients.
     Solution.objects.filter(demand__client__user_id=user.pk).update(
         proposal="Conteúdo removido", delivery=""
