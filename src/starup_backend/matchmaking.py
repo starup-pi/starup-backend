@@ -1,25 +1,93 @@
-"""Matchmaking algorithm and recommendation selectors based on audited practical traction.
+"""Matchmaking selectors based on completed work and client review aggregates.
 
 Documented formula from docs/modelagem_dados_e_arquitetura_starup.md (Section 5.3):
     S_match = w1 * C_setor + w2 * M_auditoria + w3 * E_economia + w4 * T_maturidade
 
 Weights:
     w1 = 0.25 (Sector compatibility)
-    w2 = 0.35 (Audit & Review quality: average rating / 5.0)
-    w3 = 0.25 (Real economic/impact factor, approximated from completed delivery track)
+    w2 = 0.35 (Client review quality: average rating / 5.0)
+    w3 = 0.25 (Experience proxy derived from completed deliveries)
     w4 = 0.15 (Maturity / completed tests history: 1 - exp(-0.5 * N))
 
-The resulting score is normalized on a scale of 0 to 100.
+The resulting score is normalized on a scale of 0 to 100. This MVP uses completed
+deliveries as a proxy for impact: financial savings and independent audits are
+not collected, so these scores must not be presented as audited financial data.
 """
 
 import math
 from typing import Any
+from uuid import UUID
 
+from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import ValidationError
 from django.db.models import Avg, Count, Q
+from django.utils.text import slugify
+from rest_framework.exceptions import NotFound
 
 from starup_backend.common.roles import Role
 from starup_backend.demands.models import Demand
+from starup_backend.demands.selectors import visible_demands
 from starup_backend.profiles.models import StartupProfile
+from starup_backend.solutions.models import Solution
+
+
+def _category_matches(startup_category: str, slug: str, name: str) -> bool:
+    """Compare canonical labels without treating partial words as sectors."""
+    category = slugify(startup_category)
+    return bool(category) and category in {slugify(slug), slugify(name)}
+
+
+def _startup_statistics():
+    """Compute statistics in one query, including only confirmed completions."""
+    completed = Q(solutions__status=Solution.Status.COMPLETED)
+    return StartupProfile.objects.annotate(
+        average_rating=Avg("solutions__review__rating", filter=completed),
+        review_count=Count("solutions__review", filter=completed, distinct=True),
+        completed_count=Count("solutions", filter=completed, distinct=True),
+    )
+
+
+def _ranked_startups():
+    return (
+        _startup_statistics()
+        .filter(user__ativo=True, user__perfil_ativo=Role.STARTUP)
+        .values(
+            "id",
+            "name",
+            "description",
+            "website",
+            "category",
+            "average_rating",
+            "review_count",
+            "completed_count",
+        )
+    )
+
+
+def _startup_result(startup, metrics):
+    return {
+        "startup_id": startup["id"],
+        "startup_name": startup["name"],
+        "startup_description": startup["description"],
+        "startup_website": startup["website"],
+        "startup_category": startup["category"],
+        "average_rating": startup["average_rating"],
+        "review_count": startup["review_count"],
+        "completed_tests": startup["completed_count"],
+        "has_seal": metrics["has_seal"],
+        "score": metrics["score"],
+        "details": metrics,
+    }
+
+
+def _startup_sort_key(item):
+    return (
+        -item["score"],
+        -(item["average_rating"] or 0),
+        -item["completed_tests"],
+        item["startup_name"].casefold(),
+        str(item["startup_id"]),
+    )
 
 
 def calculate_match_score(
@@ -36,7 +104,7 @@ def calculate_match_score(
     if average_rating and average_rating > 0:
         # Base factor from 1.0 to 5.0 scale
         m_auditoria = min(1.0, max(0.0, float(average_rating) / 5.0))
-        # Audited seal multiplier: if rated >= 4.0, full confidence
+        # Positive client validation requires completed work and a rating >= 4.
         has_seal = average_rating >= 4.0 and completed_tests >= 1
     else:
         # Default baseline for startups without reviews yet (neutral 0.5)
@@ -72,55 +140,23 @@ def calculate_match_score(
     }
 
 
-def get_matchmaking_for_demand(demand_id: str | Any) -> list[dict[str, Any]]:
-    """Rank startups for a given demand based on sector alignment and practical traction."""
+def get_matchmaking_for_demand(
+    demand_id: str | UUID, *, user=None
+) -> list[dict[str, Any]]:
+    """Rank startups for a visible demand by sector and completed work."""
     try:
-        demand = Demand.objects.select_related("category").get(id=demand_id)
-    except (Demand.DoesNotExist, ValueError):
-        return []
-
-    demand_category_slug = (demand.category.slug or "").strip().lower()
-    demand_category_name = (demand.category.name or "").strip().lower()
-
-    # Query active startups with aggregated review stats and completed solutions count
-    startups = (
-        StartupProfile.objects.filter(
-            user__ativo=True,
-            user__perfil_ativo=Role.STARTUP,
+        demand = (
+            visible_demands(user if user is not None else AnonymousUser())
+            .select_related("category")
+            .get(id=demand_id)
         )
-        .annotate(
-            average_rating=Avg("solutions__review__rating"),
-            review_count=Count("solutions__review", distinct=True),
-            completed_count=Count(
-                "solutions",
-                filter=Q(solutions__status="COMPLETED"),
-                distinct=True,
-            ),
-        )
-        .values(
-            "id",
-            "name",
-            "description",
-            "website",
-            "category",
-            "average_rating",
-            "review_count",
-            "completed_count",
-        )
-    )
+    except (Demand.DoesNotExist, ValidationError, ValueError, TypeError) as exc:
+        raise NotFound() from exc
 
     results = []
-    for s in startups:
-        startup_cat = (s.get("category") or "").strip().lower()
-        # Direct match if category equals demand slug or demand name
-        category_match = (
-            bool(startup_cat)
-            and (
-                startup_cat == demand_category_slug
-                or startup_cat == demand_category_name
-                or startup_cat in demand_category_slug
-                or demand_category_slug in startup_cat
-            )
+    for s in _ranked_startups():
+        category_match = _category_matches(
+            s["category"], demand.category.slug, demand.category.name
         )
 
         metrics = calculate_match_score(
@@ -129,57 +165,24 @@ def get_matchmaking_for_demand(demand_id: str | Any) -> list[dict[str, Any]]:
             completed_tests=s.get("completed_count") or 0,
         )
 
-        results.append({
-            "startup_id": s["id"],
-            "startup_name": s["name"],
-            "startup_description": s["description"],
-            "startup_website": s["website"],
-            "startup_category": s["category"],
-            "average_rating": s["average_rating"],
-            "review_count": s["review_count"],
-            "completed_tests": s["completed_count"],
-            "has_seal": metrics["has_seal"],
-            "score": metrics["score"],
-            "details": metrics,
-        })
+        results.append(_startup_result(s, metrics))
 
-    # Sort descending by match score, then rating, then name
-    results.sort(
-        key=lambda item: (
-            item["score"],
-            item["average_rating"] or 0,
-            item["completed_tests"],
-        ),
-        reverse=True,
-    )
+    # Stable ordering keeps equally ranked cards from changing between requests.
+    results.sort(key=_startup_sort_key)
     return results
 
 
 def get_recommended_demands_for_startup(user) -> list[dict[str, Any]]:
-    """Rank open public demands for a logged-in startup based on sector compatibility."""
+    """Rank available public demands for a startup by sector compatibility."""
+    if not user.is_authenticated or not user.ativo or user.perfil_ativo != Role.STARTUP:
+        return []
     try:
-        startup_profile = StartupProfile.objects.get(user=user)
+        startup_profile = _startup_statistics().get(user=user)
     except StartupProfile.DoesNotExist:
         return []
 
-    # Get startup metrics
-    stats = (
-        StartupProfile.objects.filter(id=startup_profile.id)
-        .annotate(
-            average_rating=Avg("solutions__review__rating"),
-            completed_count=Count(
-                "solutions",
-                filter=Q(solutions__status="COMPLETED"),
-                distinct=True,
-            ),
-        )
-        .values("average_rating", "completed_count")
-        .first()
-    ) or {}
-
-    startup_cat = (startup_profile.category or "").strip().lower()
-    avg_rating = stats.get("average_rating")
-    completed_tests = stats.get("completed_count") or 0
+    avg_rating = startup_profile.average_rating
+    completed_tests = startup_profile.completed_count
 
     open_demands = (
         Demand.objects.filter(
@@ -188,7 +191,7 @@ def get_recommended_demands_for_startup(user) -> list[dict[str, Any]]:
             client__user__ativo=True,
             client__user__perfil_ativo=Role.CLIENT,
         )
-        .select_related("category")
+        .exclude(solutions__startup=startup_profile)
         .values(
             "id",
             "title",
@@ -203,17 +206,8 @@ def get_recommended_demands_for_startup(user) -> list[dict[str, Any]]:
 
     results = []
     for d in open_demands:
-        cat_slug = (d.get("category__slug") or "").strip().lower()
-        cat_name = (d.get("category__name") or "").strip().lower()
-
-        category_match = (
-            bool(startup_cat)
-            and (
-                startup_cat == cat_slug
-                or startup_cat == cat_name
-                or startup_cat in cat_slug
-                or cat_slug in startup_cat
-            )
+        category_match = _category_matches(
+            startup_profile.category, d["category__slug"], d["category__name"]
         )
 
         metrics = calculate_match_score(
@@ -222,90 +216,49 @@ def get_recommended_demands_for_startup(user) -> list[dict[str, Any]]:
             completed_tests=completed_tests,
         )
 
-        results.append({
-            "demand_id": d["id"],
-            "title": d["title"],
-            "description": d["description"],
-            "category_id": d["category_id"],
-            "category_name": d["category__name"],
-            "category_slug": d["category__slug"],
-            "created_at": d["created_at"],
-            "score": metrics["score"],
-            "has_seal": metrics["has_seal"],
-            "details": metrics,
-        })
+        results.append(
+            {
+                "demand_id": d["id"],
+                "title": d["title"],
+                "description": d["description"],
+                "category_id": d["category_id"],
+                "category_name": d["category__name"],
+                "category_slug": d["category__slug"],
+                "created_at": d["created_at"],
+                "score": metrics["score"],
+                "has_seal": metrics["has_seal"],
+                "details": metrics,
+            }
+        )
 
     results.sort(
-        key=lambda item: (item["score"], item["created_at"]),
-        reverse=True,
+        key=lambda item: (
+            -item["score"],
+            -item["created_at"].timestamp(),
+            str(item["demand_id"]),
+        ),
     )
     return results
 
 
-def get_investor_traction_vitrine(min_score: float = 70.0) -> list[dict[str, Any]]:
+def get_investor_traction_vitrine(min_score: float = 0.0) -> list[dict[str, Any]]:
     """Return top startups ranked by practical traction score S_match.
 
-    Per Section 5.4 of docs:
-    Startups with S_match >= 75 and at least 1 audited test with rating >= 4.0
-    are prioritized in the investor showcase.
+    The public directory includes startups without completed work. Consumers may
+    request a minimum score; the seal separately identifies reviewed completions.
     """
-    startups = (
-        StartupProfile.objects.filter(
-            user__ativo=True,
-            user__perfil_ativo=Role.STARTUP,
-        )
-        .annotate(
-            average_rating=Avg("solutions__review__rating"),
-            review_count=Count("solutions__review", distinct=True),
-            completed_count=Count(
-                "solutions",
-                filter=Q(solutions__status="COMPLETED"),
-                distinct=True,
-            ),
-        )
-        .values(
-            "id",
-            "name",
-            "description",
-            "website",
-            "category",
-            "average_rating",
-            "review_count",
-            "completed_count",
-        )
-    )
-
     results = []
-    for s in startups:
-        # For investor vitrine, broad sector match is treated as verified
+    for s in _ranked_startups():
+        # The broad directory has no target sector, so category is held constant.
         metrics = calculate_match_score(
             category_match=True,
             average_rating=s.get("average_rating"),
             completed_tests=s.get("completed_count") or 0,
         )
 
-        results.append({
-            "startup_id": s["id"],
-            "startup_name": s["name"],
-            "startup_description": s["description"],
-            "startup_website": s["website"],
-            "startup_category": s["category"],
-            "average_rating": s["average_rating"],
-            "review_count": s["review_count"],
-            "completed_tests": s["completed_count"],
-            "has_seal": metrics["has_seal"],
-            "score": metrics["score"],
-            "details": metrics,
-        })
+        results.append(_startup_result(s, metrics))
 
-    results.sort(
-        key=lambda item: (
-            item["score"],
-            item["average_rating"] or 0,
-            item["completed_tests"],
-        ),
-        reverse=True,
-    )
+    results.sort(key=_startup_sort_key)
 
     if min_score > 0:
         return [r for r in results if r["score"] >= min_score]

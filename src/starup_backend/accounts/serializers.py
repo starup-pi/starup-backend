@@ -31,6 +31,7 @@ class RegistrationSerializer(StrictSerializer):
         max_length=300, required=False, allow_blank=True
     )
     website = serializers.URLField(required=False, allow_blank=True)
+    category = serializers.CharField(max_length=40, required=False, allow_blank=True)
 
     def validate(self, attrs):
         if attrs["policy_version"] != settings.PRIVACY_POLICY_VERSION:
@@ -44,7 +45,13 @@ class RegistrationSerializer(StrictSerializer):
             raise serializers.ValidationError({"password": exc.messages}) from exc
         role_fields = {
             "CLIENT": {"person_type", "document", "display_name", "legal_name"},
-            "STARTUP": {"startup_name", "description", "website", "legal_name"},
+            "STARTUP": {
+                "startup_name",
+                "description",
+                "website",
+                "category",
+                "legal_name",
+            },
             "INVESTOR": set(),
         }
         supplied_profile = set(attrs) - {"email", "password", "role", "policy_version"}
@@ -112,6 +119,7 @@ def private_account(user) -> dict:
             "name": startup.name,
             "description": startup.description,
             "website": startup.website,
+            "category": startup.category,
         }
     elif hasattr(user, "investor_profile"):
         profile = {"alias": user.investor_profile.alias}
