@@ -26,7 +26,11 @@ from starup_backend.notifications.views import (
     PushSubscriptionDetailView,
     PushSubscriptionView,
 )
-from starup_backend.profiles.views import OwnStartupViewSet, StartupViewSet
+from starup_backend.profiles.views import (
+    ClientViewSet,
+    OwnStartupViewSet,
+    StartupViewSet,
+)
 from starup_backend.reviews.views import ReviewCreateView
 from starup_backend.solutions.views import SolutionViewSet
 
@@ -37,6 +41,7 @@ router.register("categories", CategoryViewSet, basename="category")
 router.register("demands", DemandViewSet, basename="demand")
 router.register("solutions", SolutionViewSet, basename="solution")
 router.register("startups", StartupViewSet, basename="startup")
+router.register("clients", ClientViewSet, basename="client")
 router.register("my-startups", OwnStartupViewSet, basename="own-startup")
 
 urlpatterns = [
