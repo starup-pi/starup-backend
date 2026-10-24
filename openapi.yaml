@@ -271,6 +271,67 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedFeedPostList'
           description: ''
+  /api/v1/matchmaking/demands/{demand_id}/:
+    get:
+      operationId: matchmaking_demands_list
+      description: Returns ranked startup matches for a specific demand.
+      parameters:
+      - in: path
+        name: demand_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - matchmaking
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DemandMatchResult'
+          description: ''
+  /api/v1/matchmaking/recommended-demands/:
+    get:
+      operationId: matchmaking_recommended_demands_list
+      description: Returns open demands ranked by sector match for the authenticated
+        startup.
+      tags:
+      - matchmaking
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecommendedDemandResult'
+          description: ''
+  /api/v1/matchmaking/traction-showcase/:
+    get:
+      operationId: matchmaking_traction_showcase_list
+      description: Returns top startups ranked by traction and practical audit scores.
+      tags:
+      - matchmaking
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DemandMatchResult'
+          description: ''
   /api/v1/me/:
     get:
       operationId: me_retrieve
@@ -666,6 +727,47 @@ components:
       - DEMAND
       type: string
       description: '* `DEMAND` - DEMAND'
+    DemandMatchResult:
+      type: object
+      properties:
+        startup_id:
+          type: string
+          format: uuid
+        startup_name:
+          type: string
+        startup_description:
+          type: string
+        startup_website:
+          type: string
+        startup_category:
+          type: string
+        average_rating:
+          type: number
+          format: double
+          nullable: true
+        review_count:
+          type: integer
+        completed_tests:
+          type: integer
+        has_seal:
+          type: boolean
+        score:
+          type: number
+          format: double
+        details:
+          $ref: '#/components/schemas/MatchmakingDetails'
+      required:
+      - average_rating
+      - completed_tests
+      - details
+      - has_seal
+      - review_count
+      - score
+      - startup_category
+      - startup_description
+      - startup_id
+      - startup_name
+      - startup_website
     DemandWriteRequest:
       type: object
       properties:
@@ -714,6 +816,33 @@ components:
       required:
       - email
       - password
+    MatchmakingDetails:
+      type: object
+      properties:
+        score:
+          type: number
+          format: double
+        has_seal:
+          type: boolean
+        c_setor:
+          type: number
+          format: double
+        m_auditoria:
+          type: number
+          format: double
+        e_economia:
+          type: number
+          format: double
+        t_maturidade:
+          type: number
+          format: double
+      required:
+      - c_setor
+      - e_economia
+      - has_seal
+      - m_auditoria
+      - score
+      - t_maturidade
     Message:
       type: object
       properties:
@@ -886,6 +1015,9 @@ components:
         website:
           type: string
           format: uri
+        category:
+          type: string
+          maxLength: 40
     PersonTypeEnum:
       enum:
       - PF
@@ -989,6 +1121,44 @@ components:
           format: uuid
       required:
       - id
+    RecommendedDemandResult:
+      type: object
+      properties:
+        demand_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        category_id:
+          type: string
+          format: uuid
+        category_name:
+          type: string
+        category_slug:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        score:
+          type: number
+          format: double
+        has_seal:
+          type: boolean
+        details:
+          $ref: '#/components/schemas/MatchmakingDetails'
+      required:
+      - category_id
+      - category_name
+      - category_slug
+      - created_at
+      - demand_id
+      - description
+      - details
+      - has_seal
+      - score
+      - title
     RegistrationRequest:
       type: object
       properties:

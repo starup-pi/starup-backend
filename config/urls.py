@@ -15,6 +15,11 @@ from starup_backend.accounts.views import (
 from starup_backend.common.pwa import pwa_file
 from starup_backend.demands.views import CategoryViewSet, DemandViewSet
 from starup_backend.feed.views import FeedView
+from starup_backend.matchmaking_views import (
+    DemandMatchmakingView,
+    InvestorTractionVitrineView,
+    StartupRecommendationsView,
+)
 from starup_backend.notifications.views import (
     PushConfigView,
     PushSubscriptionDetailView,
@@ -73,6 +78,21 @@ urlpatterns = [
         "api/v1/docs/",
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
+    ),
+    path(
+        "api/v1/matchmaking/demands/<uuid:demand_id>/",
+        DemandMatchmakingView.as_view(),
+        name="matchmaking-demand",
+    ),
+    path(
+        "api/v1/matchmaking/recommended-demands/",
+        StartupRecommendationsView.as_view(),
+        name="matchmaking-recommendations",
+    ),
+    path(
+        "api/v1/matchmaking/traction-showcase/",
+        InvestorTractionVitrineView.as_view(),
+        name="matchmaking-traction-showcase",
     ),
     path("api/v1/", include(router.urls)),
 ]

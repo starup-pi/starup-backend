@@ -21,3 +21,4 @@ class StartupUpdateSerializer(StrictSerializer):
         max_length=300, required=False, allow_blank=True
     )
     website = serializers.URLField(required=False, allow_blank=True)
+    category = serializers.CharField(max_length=40, required=False, allow_blank=True)
