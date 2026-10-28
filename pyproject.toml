@@ -19,6 +19,7 @@ dependencies = [
     "requests>=2.32,<3",
     "gunicorn>=23,<24",
     "pillow>=13,<14",
+    "django-cors-headers>=4.9.0",
 ]
 
 [project.optional-dependencies]

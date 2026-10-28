@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "django_filters",
+    "corsheaders",
     "starup_backend.usuarios.apps.UsuariosConfig",
     "starup_backend.profiles",
     "starup_backend.demands",
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -114,6 +116,10 @@ CSRF_COOKIE_SAMESITE = "Lax"
 CSRF_TRUSTED_ORIGINS = [
     value for value in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if value
 ]
+CORS_ALLOWED_ORIGINS = [
+    "https://starup-frontend.vercel.app",
+]
+
 SECURE_SSL_REDIRECT = not DEBUG
 SECURE_HSTS_SECONDS = 0 if DEBUG else 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
