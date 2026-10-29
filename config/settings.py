@@ -118,7 +118,12 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 CORS_ALLOWED_ORIGINS = [
     "https://starup-frontend.vercel.app",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
+CORS_ALLOW_CREDENTIALS = True
 
 SECURE_SSL_REDIRECT = not DEBUG
 SECURE_HSTS_SECONDS = 0 if DEBUG else 31536000
